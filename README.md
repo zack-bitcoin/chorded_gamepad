@@ -32,8 +32,7 @@ To make a macro, first click the macro button. Then type the letters that you wa
 
 The 6 buttons offer 63 combinations, so it can store up to 63 macros.
 
-To cancel creating a macro, click the macro button again by itself.
-
+There is a button for canceling macro creation, if you change your mind and don't want to create that macro.
 
 Installing
 ==========
