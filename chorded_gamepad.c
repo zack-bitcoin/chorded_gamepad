@@ -37,14 +37,14 @@ void configure_keys(){
   keys[7] = KEY_RIGHTBRACE;
   keys[8] = KEY_A;
   keys[9] = KEY_S;
-  keys[10] = KEY_X;
+  keys[10] = KEY_Y;
   keys[11] = KEY_W;
   keys[12] = KEY_U;
-  keys[13] = KEY_Z;
+  keys[13] = KEY_J;
   keys[14] = KEY_SEMICOLON;
   keys[15] = KEY_0;
   keys[16] = KEY_E;
-  keys[17] = KEY_Y;
+  keys[17] = KEY_X;
   keys[18] = KEY_H;
   keys[19] = KEY_COMMA;//16, 2, 1
   keys[20] = KEY_M;
@@ -68,11 +68,11 @@ void configure_keys(){
   keys[38] = KEY_P;
   keys[39] = KEY_6;//32, 4, 2, 1
   keys[40] = KEY_R;
-  keys[41] = KEY_J;
+  keys[41] = KEY_Z;
   keys[42] = KEY_EQUAL;
   keys[43] = KEY_3;
   keys[44] = KEY_G;
-  keys[45] = KEY_5;
+  keys[45] = KEY_4;
   keys[46] = KEY_7;
   keys[47] = KEY_RESERVED;//32, 8, 4, 2, 1
   keys[48] = KEY_D;
@@ -126,11 +126,11 @@ void configure_keys(){
   //memorization cheatsheet
   // space 1; backspace 2; enter 4;
   // A 8 ; B 37; C 3; D 48 ; E 16
-  // F 36; G 44; H 18; I 32; J 41
+  // F 36; G 44; H 18; I 32; J 13
   // K 24 ; L 5 ; M 20; N 34; O 33
   // P 38; Q 52; R 40; S 9; T 6
   // U 12; V 25; W 11; X 10; Y 17
-  // Z 13
+  // Z 41
   // right 58; left 23; up 54; down 27
   // ' 50; . 26; , 19; ] 7; 0 15
   // / 28; \ 35; = 42; ` 22; ; 14
