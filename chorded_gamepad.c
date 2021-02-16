@@ -300,9 +300,6 @@ int process_chord_buttons(int fd){
       //printf("making a new macro\n");
       making_a_macro = 1;
     } else if((n == 64) && (making_a_macro)){
-      //printf("cancel making a macro\n");
-      //making_a_macro = 0;
-      //macro = new_code(KEY_RESERVED);
     } else if((n>64) && making_a_macro){
       //printf("store macro in %i\n", n-64);
       struct code * mcopy;
@@ -326,7 +323,6 @@ int process_chord_buttons(int fd){
         append_code(&macro, y);
       };
       last_code = y;
-      //printf("last key %i\n", last_key);
     }
     zero_this_chord();
   }
@@ -381,17 +377,13 @@ int process_events(struct js_event js, struct input_event event, int uinp_fd){
   int type_check = js.type & ~JS_EVENT_INIT;
   if((type_check == JS_EVENT_BUTTON)||
      (type_check == JS_EVENT_AXIS)){
-
     process_cancel_macro(js);
-    
     process_repeater(js, uinp_fd);
     if(repeat_key_pressed()){
       return(0);
     };
-
     int b = is_chord_button(js);
     if(b != -1){
-      //if(button_threshold[b] == js.value){
       if(threshold_exceeded(button_threshold[b], js.value)){
         state[b] = 1;
         this_chord[b] = 1;

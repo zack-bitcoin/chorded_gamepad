@@ -75,4 +75,4 @@ CONFIGURATION
 
 The top of the chorded_gamepad.c file has a commented region explaining what can be customized.
 
-The configuratoin includes some notes about how the keys are organized onto chords, and a cheatsheet to help you memorize the chords.
+The configuration includes some notes about how the keys are organized onto chords, and a cheatsheet to help you memorize the chords.
