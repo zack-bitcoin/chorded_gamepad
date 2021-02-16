@@ -30,85 +30,92 @@ void configure_keys(){
   // keys[64] links that binary number to the code for that key.
   keys[1] = KEY_SPACE;
   keys[2] = KEY_BACKSPACE;
-  keys[3] = KEY_A;
-  keys[4] = KEY_ESC;
-  keys[5] = KEY_K;
-  keys[6] = KEY_L;
-  keys[7] = KEY_RIGHT;
-  keys[8] = KEY_ENTER;
-  keys[9] = KEY_D;
-  keys[10] = KEY_N;
-  keys[11] = KEY_APOSTROPHE;
-  keys[12] = KEY_J;
-  keys[13] = KEY_DOT;
-  keys[14] = KEY_COMMA;
-  keys[15] = KEY_RIGHTBRACE;
-  keys[16] = KEY_TAB;
-  keys[17] = KEY_E;
-  keys[18] = KEY_O;
-  keys[19] = KEY_M;
-  keys[20] = KEY_H;
-  keys[21] = KEY_SLASH;
-  keys[22] = KEY_BACKSLASH;
-  keys[23] = KEY_EQUAL;
-  keys[24] = KEY_T;
-  keys[25] = KEY_Z;
-  keys[26] = KEY_GRAVE;
-  keys[27] = KEY_9;
-  keys[28] = KEY_C;
-  keys[29] = KEY_6;
-  keys[30] = KEY_3;
+  keys[3] = KEY_C;
+  keys[4] = KEY_ENTER;
+  keys[5] = KEY_L;
+  keys[6] = KEY_T;
+  keys[7] = KEY_RIGHTBRACE;
+  keys[8] = KEY_A;
+  keys[9] = KEY_S;
+  keys[10] = KEY_X;
+  keys[11] = KEY_W;
+  keys[12] = KEY_U;
+  keys[13] = KEY_Z;
+  keys[14] = KEY_SEMICOLON;
+  keys[15] = KEY_0;
+  keys[16] = KEY_E;
+  keys[17] = KEY_Y;
+  keys[18] = KEY_H;
+  keys[19] = KEY_COMMA;//16, 2, 1
+  keys[20] = KEY_M;
+  keys[21] = KEY_MINUS;//16,4,1
+  keys[22] = KEY_GRAVE;//16, 4, 2
+  keys[23] = KEY_LEFT;//16,4,2,1
+  keys[24] = KEY_K;
+  keys[25] = KEY_V;
+  keys[26] = KEY_DOT;
+  keys[27] = KEY_DOWN;
+  keys[28] = KEY_SLASH;//16,8,4
+  keys[29] = KEY_1;
+  keys[30] = KEY_5;
   keys[31] = KEY_F9;//16, 8, 4, 2, 1
   keys[32] = KEY_I;
-  keys[33] = KEY_F;
-  keys[34] = KEY_R;
-  keys[35] = KEY_0;//32, 2, 1
-  keys[36] = KEY_S;
-  keys[37] = KEY_P;
-  keys[38] = KEY_Q;
-  keys[39] = KEY_UP;//32, 4, 2, 1
-  keys[40] = KEY_U;
-  keys[41] = KEY_B;
-  keys[42] = KEY_V;
-  keys[43] = KEY_8;
-  keys[44] = KEY_W;
+  keys[33] = KEY_O;
+  keys[34] = KEY_N;
+  keys[35] = KEY_BACKSLASH;//32, 2, 1
+  keys[36] = KEY_F;
+  keys[37] = KEY_B;
+  keys[38] = KEY_P;
+  keys[39] = KEY_6;//32, 4, 2, 1
+  keys[40] = KEY_R;
+  keys[41] = KEY_J;
+  keys[42] = KEY_EQUAL;
+  keys[43] = KEY_3;
+  keys[44] = KEY_G;
   keys[45] = KEY_5;
-  keys[46] = KEY_2;
+  keys[46] = KEY_7;
   keys[47] = KEY_RESERVED;//32, 8, 4, 2, 1
-  keys[48] = KEY_X;
-  keys[49] = KEY_Y;
-  keys[50] = KEY_SEMICOLON;
-  keys[51] = KEY_7;
-  keys[52] = KEY_G;
-  keys[53] = KEY_4;
-  keys[54] = KEY_1;
+  keys[48] = KEY_D;
+  keys[49] = KEY_TAB;
+  keys[50] = KEY_APOSTROPHE;//32, 16, 2
+  keys[51] = KEY_ESC;
+  keys[52] = KEY_Q;
+  keys[53] = KEY_9;
+  keys[54] = KEY_UP;
   keys[55] = KEY_RESERVED;//32, 16, 4, 2, 1
-  keys[56] = KEY_LEFT;
-  keys[57] = KEY_LEFTBRACE;
-  keys[58] = KEY_MINUS;
+  keys[56] = KEY_LEFTBRACE;//32, 16, 8
+  keys[57] = KEY_2;
+  keys[58] = KEY_RIGHT;//32, 16, 8, 2
   keys[59] = KEY_F8;
-  keys[60] = KEY_DOWN;//32, 16, 8, 4
+  keys[60] = KEY_8;//32, 16, 8, 4
   keys[61] = KEY_RESERVED;//32, 16, 8, 4, 1
   keys[62] = KEY_RESERVED;//32,16,8,4,2
   keys[63] = KEY_RESERVED;//32,16,8,4,2,1
 
   //one button
-  //space backspace escape newline tab i
+  //space backspace newline a e i
 
-  //two buttons
-  //xkljh vi edit mode letters
-  //adefnorstu  more common english letters
+  //two buttons todo
+  //fhs  more common english letters
+  //xy
+  //lr
+  //ck
+  //td
+
+  //nm
+  //ou
 
   //three buttons
-  //right left
-  //;'`\,./
-  //0
-  //mcywgpbvqz less common english letters
+  //[] \/
+  //tab ; -=
+  //'` ,.
+  // gbpq
+  //wv jz less common english letters
 
   //four buttons
-  //123456789
-  //-=[] 
-  //up down
+  //1234567890
+  //esc
+  //up down right left
 
   //five buttons
   //f9 f8
@@ -117,18 +124,19 @@ void configure_keys(){
   //reserved
 
   //memorization cheatsheet
-  // space 1; backspace 2; esc 4;
-  // enter 8; tab 16; I 32; 
-  // right 7; left 56; up 39; down 60 
-  // A 3 ; B 41; C 28; D 9 ; E 17
-  // F 33; G 52; H 20; I 32; J 12
-  // K 5 ; L 6 ; M 19; N 10; O 18
-  // P 37; Q 38; R 34; S 36; T 24
-  // U 40; V 42; W 44; X 48; Y 49
-  // Z 25
-  // ' 11; . 13; , 14; ] 15; 0 35
-  // / 21; \ 22; = 23; ` 26; ; 50
-  // [ 57; - 58; f8 59; f9 31; 
+  // space 1; backspace 2; enter 4;
+  // A 8 ; B 37; C 3; D 48 ; E 16
+  // F 36; G 44; H 18; I 32; J 41
+  // K 24 ; L 5 ; M 20; N 34; O 33
+  // P 38; Q 52; R 40; S 9; T 6
+  // U 12; V 25; W 11; X 10; Y 17
+  // Z 13
+  // right 58; left 23; up 54; down 27
+  // ' 50; . 26; , 19; ] 7; 0 15
+  // / 28; \ 35; = 42; ` 22; ; 14
+  // [ 56; - 21; f8 59; f9 31;
+  // 0 15; 1 29; 2 57; 3 43; 4 45;
+  // 5 30; 6 39; 7 46; 8 60; 9 53;
 }
 //END CONFIGURATION. you probably don't want to edit below this line.
 
@@ -467,3 +475,4 @@ int main() {
   cleanup(uinp_fd);
   return(0);
 }
+
