@@ -1,4 +1,4 @@
-Chorded Gamepad
+Chorded Gamepad 
 ==========
 
 This is software so you can use a gamepad as a chorded keyboard.
