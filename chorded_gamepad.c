@@ -20,6 +20,9 @@ int button_types[10] =
   {1,1,1,2,2,1,1,2,2,1};//2 is for triggers.
 int button_threshold[10] =
   {1,1,1,32767,-32767,1,1,1,1,1};
+//button number, type, value.
+int repeater[3] = {7, 2, -32767};
+int cancel_macro[3] = {6, 2, 32767};
 
 void configure_keys(){
   start_with_blank_keys();
@@ -138,8 +141,6 @@ void configure_keys(){
 int state[10] = {0,0,0,0,0,0,0,0,0,0};
 int this_chord[10] = {0,0,0,0,0,0,0,0,0,0};
 
-//button number, type, value.
-int repeater[3] = {6, 2, 32767};
 
 int making_a_macro = 0;
 
@@ -182,7 +183,7 @@ void append_code(struct code * x, struct code y){
 }
 
 int print_code(struct code x){
-  //only for testing purposes.
+  //for testing purposes.
   printf("key: %i, shift: %i, alt: %i, control: %i\n",
          x.key, x.shift, x.alt, x.control);
   if(x.next == NULL){
@@ -193,6 +194,7 @@ int print_code(struct code x){
   }
 }
 void print_state_now(){
+  //for testing purposes.
   printf("state now %i %i %i %i %i %i %i %i %i %i\n",
          state[0], state[1], state[2],
          state[3], state[4], state[5],
@@ -200,6 +202,7 @@ void print_state_now(){
          state[9]);
 }
 void print_this_chord(){
+  //for testing purposes.
   printf("chord now %i %i %i %i %i %i %i %i %i %i\n",
          this_chord[0], this_chord[1], this_chord[2],
          this_chord[3], this_chord[4], this_chord[5],
@@ -294,14 +297,14 @@ int process_chord_buttons(int fd){
   if(b){
     int n = chord_to_val(this_chord);
     if((n == 64) && (!(making_a_macro))){
-      printf("making a new macro\n");
+      //printf("making a new macro\n");
       making_a_macro = 1;
     } else if((n == 64) && (making_a_macro)){
-      printf("cancel making a macro\n");
-      making_a_macro = 0;
-      macro = new_code(KEY_RESERVED);
+      //printf("cancel making a macro\n");
+      //making_a_macro = 0;
+      //macro = new_code(KEY_RESERVED);
     } else if((n>64) && making_a_macro){
-      printf("store macro in %i\n", n-64);
+      //printf("store macro in %i\n", n-64);
       struct code * mcopy;
       mcopy = (struct code*)malloc(sizeof(struct code));
       *mcopy = macro;
@@ -309,7 +312,7 @@ int process_chord_buttons(int fd){
       making_a_macro = 0;
       macro = new_code(KEY_RESERVED);
     } else if((n>64)&&(macros[n-64])){
-      printf("call macro %i\n", n-64);
+      //printf("call macro %i\n", n-64);
       type_code(macros[n-64], fd);
     } else if(n){
       __u16 key = keys[n];
@@ -342,6 +345,15 @@ int repeat_key_pressed(){
   return(!(repeater_code_now.key == KEY_RESERVED));
 }
 
+int process_cancel_macro(struct js_event js){
+  if((js.number == cancel_macro[0]) &&
+     (js.type == cancel_macro[1]) &&
+     (js.value == cancel_macro[2])){
+    //printf("cancel making a macro\n");
+    making_a_macro = 0;
+    macro = new_code(KEY_RESERVED);
+  };
+}
 int process_repeater(struct js_event js, int fd){
   if((js.number == repeater[0]) &&
      (js.type == repeater[1])){
@@ -370,7 +382,8 @@ int process_events(struct js_event js, struct input_event event, int uinp_fd){
   if((type_check == JS_EVENT_BUTTON)||
      (type_check == JS_EVENT_AXIS)){
 
-
+    process_cancel_macro(js);
+    
     process_repeater(js, uinp_fd);
     if(repeat_key_pressed()){
       return(0);
@@ -394,7 +407,6 @@ int process_events(struct js_event js, struct input_event event, int uinp_fd){
 int main_loop(int joy_fd, int uinp_fd) {
   struct js_event js;
   struct input_event event;
-  printf("in main loop\n");
   while (1){
     if (read(joy_fd, &js, sizeof(struct js_event)) != sizeof(struct js_event)){
       printf("error reading from device");

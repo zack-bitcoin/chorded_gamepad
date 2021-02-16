@@ -8,7 +8,7 @@ The buttons
 
 I use a Logitech F310 gamepad, so I will explain which buttons I use for this gamepad. You can configure it to use whatever buttons you want on your gamepad.
 
-Uses 11 buttons in total.
+Uses 12 buttons in total.
 
 It uses 6 basic buttons to encode lower case letters, numbers, and some symbols.
 I use A, B, right bumper, down on D-pad, left on D-pad, and left bumper.
@@ -18,10 +18,12 @@ I use left trigger, Y button, and right trigger.
 
 With a keyboard, if you hold a key down you can cause that letter to get repeatedly typed many times. This behaviour is contradictory with a chordal keyboard, because you need to release the chord to cause it to be typed. To enable this behaviour 1 button remembers the most recently executed letter. You can hold this button down to type that letter many times.
 It remembers modifiers too, so you can hold down CONTROL+SHIFT+x for example.
-I use right on the D-pad for this.
+I use up on the D-pad for this.
 
-1 final button is used for macros.
-I use the X button.
+2 buttons are used for macros.
+One for making macros and calling stored macros, the other is used to cancel macro creation.
+I use the X button for creating and calling.
+I use right on the D-pad for canceling.
 
 Macros
 =======
@@ -42,6 +44,30 @@ This code was tested with Ubuntu Linux, but it should be easy to make it work on
 
 You need gcc for compiling the software.
 You need a gamepad to test it with.
+
+You need permission to /dev/uinput, which is the virtual keyboard to allow this program to type. By default you do not have this permission, you need to enable it.
+To gain permission, first make a new group for the users that have permission to access the virtual keyboard:
+`sudo groupadd -f uinput`
+
+Next add yourself to the new group:
+`sudo gpasswd -a username uinput`
+Use your own username instead of the word "username".
+
+Next create the file /etc/udev/rules.d/99-input.rules
+Write this in the file:
+`KERNEL==”uinput”, GROUP=”uinput”, MODE:=”0660″`
+
+To activate the new settings, either reboot, or do this:
+```
+sudo udevadm control –reload
+sudo udevadm trigger –type=devices –sysname-match=uinput
+```
+and reload your account to have access to your new permissions: `su username`
+Use your own username instead of the word "username".
+
+To verify that you now have permission for uinput `ls -l /dev/uinput` should print out something like: `crw-rw---- 1 root uinput 10, 223 Nov 11 15:35 /dev/uinput` the `crw-rw---` and the `uinput` are the important parts.
+
+To verify that your current account is a member of the uinput group do `groups`, which prints a list of groups that you are a member of. "uinput" should be in this list.
 
 Plug in your gamepad, and run `sh start.sh`
 
