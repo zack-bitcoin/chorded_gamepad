@@ -96,7 +96,7 @@ void configure_keys(){
   //space backspace escape newline tab i
 
   //two buttons
-  //xk___l___jh____ vi edit mode letters
+  //xkljh vi edit mode letters
   //adefnorstu  more common english letters
 
   //three buttons
@@ -104,7 +104,6 @@ void configure_keys(){
   //;'`\,./
   //0
   //mcywgpbvqz less common english letters
-  //reserved
 
   //four buttons
   //123456789
@@ -112,7 +111,7 @@ void configure_keys(){
   //up down
 
   //five buttons
-  //f9 f8 reserved reserved reserved reserved
+  //f9 f8
 
   //six buttons
   //reserved
@@ -130,18 +129,11 @@ void configure_keys(){
   // ' 11; . 13; , 14; ] 15; 0 35
   // / 21; \ 22; = 23; ` 26; ; 50
   // [ 57; - 58; f8 59; f9 31; 
-
 }
-
-
-
-
 //END CONFIGURATION. you probably don't want to edit below this line.
 
 int state[10] = {0,0,0,0,0,0,0,0,0,0};
 int this_chord[10] = {0,0,0,0,0,0,0,0,0,0};
-
-
 int making_a_macro = 0;
 
 struct code {
@@ -157,8 +149,6 @@ struct code last_code;
 struct code repeater_code_now;
 struct code macro;
 struct code * macros[63];
-
-
 
 struct code new_code(__u16 key){
   struct code x;
@@ -209,7 +199,10 @@ void print_this_chord(){
          this_chord[6], this_chord[7], this_chord[8],
          this_chord[9]);
 }
-
+void print_js(struct js_event js){
+  //for testing purposes.
+  printf("button- type: %i value: %i number: %i\n", js.type, js.value, js.number);
+}
 
 void emit(int fd, int type, int code, int val)
 {
@@ -227,7 +220,6 @@ void key_up(int fd, __u16 key){
   emit(fd, EV_KEY, key, 0);
   emit(fd, EV_SYN, SYN_REPORT, 0);
 }
-
 int code_down(struct code * x, int fd){
   if(x->control){
     key_down(fd, KEY_LEFTCTRL);
@@ -260,7 +252,6 @@ int code_up(struct code * x, int fd){
   }
   return(0);
 }
-
 int type_code(struct code * x, int fd){
   code_down(x, fd);
   code_up(x, fd);
@@ -270,7 +261,6 @@ int type_code(struct code * x, int fd){
     type_code(x->next, fd);
   }
 }
-
 void zero_this_chord(){
   for(int i = 0; i < chord_size; i++){
     this_chord[i] = state[i];
@@ -293,7 +283,6 @@ int chord_to_val(int * chord){
 };
 int process_chord_buttons(int fd){
   int b = all_chordals_unpressed();
-  //printf("chords unpressed %i\n", b);
   if(b){
     int n = chord_to_val(this_chord);
     if((n == 64) && (!(making_a_macro))){
@@ -336,11 +325,9 @@ int is_chord_button(struct js_event js){
   }
   return(-1);
 }
-
 int repeat_key_pressed(){
   return(!(repeater_code_now.key == KEY_RESERVED));
 }
-
 int process_cancel_macro(struct js_event js){
   if((js.number == cancel_macro[0]) &&
      (js.type == cancel_macro[1]) &&
@@ -354,11 +341,9 @@ int process_repeater(struct js_event js, int fd){
   if((js.number == repeater[0]) &&
      (js.type == repeater[1])){
     if(js.value == repeater[2]){
-      //printf("repeater down %i\n", last_code.key);
       repeater_code_now = last_code;
       code_down(&repeater_code_now, fd);
     } else {
-      //printf("repeater up\n");
       code_up(&repeater_code_now, fd);
       repeater_code_now = new_code(KEY_RESERVED);
     }
@@ -371,9 +356,7 @@ int threshold_exceeded(int threshold, int value){
     return(value >= threshold);
   };
 };
-
 int process_events(struct js_event js, struct input_event event, int uinp_fd){
-  //printf("button- type: %i value: %i number: %i\n", js.type, js.value, js.number);
   int type_check = js.type & ~JS_EVENT_INIT;
   if((type_check == JS_EVENT_BUTTON)||
      (type_check == JS_EVENT_AXIS)){
@@ -395,7 +378,6 @@ int process_events(struct js_event js, struct input_event event, int uinp_fd){
   };
   return(0);
 }
-
 int main_loop(int joy_fd, int uinp_fd) {
   struct js_event js;
   struct input_event event;
@@ -408,7 +390,6 @@ int main_loop(int joy_fd, int uinp_fd) {
   }
   return(0);
 }
-
 int load_gamepad(){
   int joy_fd = open(gamepad_location, O_RDONLY);
   char name[128];
@@ -474,7 +455,6 @@ void cleanup(int uinp_fd){
   };
   close(uinp_fd);
 }
-
 int main() {
   int joy_fd = load_gamepad();
   int uinp_fd = load_virtual_keyboard();
@@ -487,4 +467,3 @@ int main() {
   cleanup(uinp_fd);
   return(0);
 }
-
