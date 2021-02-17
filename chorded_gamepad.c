@@ -14,6 +14,7 @@ __u16 keys[64];
 //use jstest to identify the number for your button/trigger.
 char gamepad_location[128] = "/dev/input/js0";
 int chord_size = 10;
+//first 6 buttons encode the chord. then the macro button, then control, shift, and finally the alt button.
 int buttons[10] =
   {0,1,5,7,6,4,2,2,5,3};
 int button_types[10] =
@@ -46,14 +47,14 @@ void configure_keys(){
   keys[16] = KEY_E;
   keys[17] = KEY_X;
   keys[18] = KEY_H;
-  keys[19] = KEY_COMMA;//16, 2, 1
+  keys[19] = KEY_DOT;//16, 2, 1
   keys[20] = KEY_M;
   keys[21] = KEY_MINUS;//16,4,1
   keys[22] = KEY_GRAVE;//16, 4, 2
   keys[23] = KEY_LEFT;//16,4,2,1
   keys[24] = KEY_K;
   keys[25] = KEY_V;
-  keys[26] = KEY_DOT;
+  keys[26] = KEY_COMMA;
   keys[27] = KEY_DOWN;
   keys[28] = KEY_SLASH;//16,8,4
   keys[29] = KEY_1;
@@ -97,17 +98,11 @@ void configure_keys(){
 
   //two buttons todo
   //fhs  more common english letters
-  //xy
-  //lr
-  //ck
-  //td
-
-  //nm
-  //ou
+  //xy lr ck td nm ou
 
   //three buttons
   //[] \/
-  //tab ; -=
+  //tab; -=
   //'` ,.
   // gbpq
   //wv jz less common english letters
@@ -132,9 +127,10 @@ void configure_keys(){
   // U 12; V 25; W 11; X 10; Y 17
   // Z 41
   // right 58; left 23; up 54; down 27
-  // ' 50; . 26; , 19; ] 7; 0 15
-  // / 28; \ 35; = 42; ` 22; ; 14
-  // [ 56; - 21; f8 59; f9 31;
+  // ' 50; ` 22; [ 56; ] 7;
+  // / 28; \ 35; ; 14; tab 49
+  // - 21; = 42; . 19; , 26
+  // f8 59; f9 31;
   // 0 15; 1 29; 2 57; 3 43; 4 45;
   // 5 30; 6 39; 7 46; 8 60; 9 53;
 }
