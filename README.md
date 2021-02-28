@@ -54,12 +54,12 @@ Use your own username instead of the word "username".
 
 Next create the file /etc/udev/rules.d/99-input.rules
 Write this in the file:
-`KERNEL==”uinput”, GROUP=”uinput”, MODE:=”0660″`
+`KERNEL=="uinput", GROUP="uinput", MODE:="0660"`
 
 To activate the new settings, either reboot, or do this:
 ```
-sudo udevadm control –reload
-sudo udevadm trigger –type=devices –sysname-match=uinput
+sudo udevadm control --reload
+sudo udevadm trigger --type=devices --sysname-match=uinput
 ```
 and reload your account to have access to your new permissions: `su username`
 Use your own username instead of the word "username".
