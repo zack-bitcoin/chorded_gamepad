@@ -2,6 +2,8 @@ Chorded Gamepad
 ==========
 
 This is software so you can use a gamepad as a chorded keyboard.
+This is based on joy2chord. https://github.com/wirelessdreamer/joy2chord
+If the software in this repository doesn't work for you, maybe try out joy2chord instead.
 
 The buttons
 =============
