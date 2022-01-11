@@ -151,6 +151,7 @@ page 1: 26 upper, 8 paren, enter
 4: right bracket
 5: L
 6: T
+7: right carrot
 8: left brace
 9: S
 10: E
@@ -179,8 +180,7 @@ page 1: 26 upper, 8 paren, enter
 49: V 32,16,1
 50: Y 32,16,2
 52: P  32,16,4
-53: left carrot 32,16,4,1
-54: right carrot 32,16,4,2
+56: left carrot
 
 page 2: 10 syntax, 10 digits, 7 #, 7 math, tab
 '\",./?`

@@ -13,10 +13,9 @@
 
 int uinp_fd;//pointer to virtual keyboard
 
-__u16 keys[69];
+__u16 keys[128];
 
 void setup_keys(){
-keys[0] = KEY_SPACE;
 keys[1] = KEY_TAB;
 keys[2] = KEY_ENTER;
 keys[3] = KEY_BACKSPACE;
@@ -85,6 +84,7 @@ keys[65] = KEY_SLASH;
 keys[66] = KEY_BACKSLASH;
 keys[67] = KEY_EQUAL;
 keys[68] = KEY_MINUS;
+keys[69] = KEY_SPACE;
 //keys[68] = KEY_PRINTSCREEN;
 //keys[60] = KEY_QUESTION_MARK;     
 }
@@ -188,6 +188,8 @@ static ERL_NIF_TERM setup
 static ErlNifFunc nif_funcs[] =
   {
    {"key", 4, key},
+   {"press", 4, key},
+   {"unpress", 4, key},
    {"setup", 1, setup}
   };
 
