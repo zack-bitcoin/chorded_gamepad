@@ -80,3 +80,22 @@ CONFIGURATION
 The top of the chorded_gamepad.c file has a commented region explaining what can be customized.
 
 The configuration includes some notes about how the keys are organized onto chords, and a cheatsheet to help you memorize the chords.
+
+
+
+Erlang Version
+==========
+
+As of January 2022 the erlang version of the program is working pretty well.
+It works similarly, but only the minimal part of the code is written in C, the rest is in erlang. So it is much faster to edit and try out changes.
+
+The erlang version does not currently support macros.
+
+It uses 7 buttons. 6 for making chords, and the repeaters button.
+To fit everything into only 6 buttons instead of 8, I needed to give it several pages.
+The A button is like "shift" it capitalizes the next letter.
+the B button is like "control" for the next letter.
+Down on the D pad is so that the next chord will access a number or symbol instead of a letter.
+
+to run the erlang version, go to the "erlang_version" directory, and do `sh start.sh`
+If you want to customize this code, you probably want to do that in the gamepad.erl file. Specifically the chord2key function, which maps the chords on each page to their corresponding key.

@@ -4,4 +4,6 @@ chorded_gamepad
 \#*
 #*
 ebin/*
+erlang_version/ebin/*
 *.beam
+erl_crash.dump

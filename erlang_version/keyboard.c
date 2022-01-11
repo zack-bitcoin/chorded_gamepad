@@ -106,6 +106,74 @@ void key_up(int fd, __u16 key){
   emit(fd, EV_SYN, SYN_REPORT, 0);
 }
 
+static ERL_NIF_TERM press
+(ErlNifEnv* env, int argc,
+ const ERL_NIF_TERM argv[])
+{
+  ErlNifUInt64 Key, Shift, Control, Alt;
+  enif_get_uint64(env, argv[0], &Key);
+  enif_get_uint64(env, argv[1], &Shift);
+  enif_get_uint64(env, argv[2], &Control);
+  enif_get_uint64(env, argv[3], &Alt);
+  if(Control){
+    key_down(uinp_fd, KEY_LEFTCTRL);
+  }
+  if(Shift){
+    key_down(uinp_fd, KEY_LEFTSHIFT);
+  }
+  if(Alt){
+    key_down(uinp_fd, KEY_LEFTALT);
+  }
+  //key_down(uinp_fd, Key);
+  //printf("%i\n", KEY_Z)
+  key_down(uinp_fd, keys[Key]);
+  //key_up(uinp_fd, keys[Key]);
+  /*
+  if(Alt){
+    key_up(uinp_fd, KEY_LEFTALT);
+  }
+  if(Shift){
+    key_up(uinp_fd, KEY_LEFTSHIFT);
+  }
+  if(Control){
+    key_up(uinp_fd, KEY_LEFTCTRL);
+  }
+  */
+  return argv[0];
+}
+static ERL_NIF_TERM unpress
+(ErlNifEnv* env, int argc,
+ const ERL_NIF_TERM argv[])
+{
+  ErlNifUInt64 Key, Shift, Control, Alt;
+  enif_get_uint64(env, argv[0], &Key);
+  enif_get_uint64(env, argv[1], &Shift);
+  enif_get_uint64(env, argv[2], &Control);
+  enif_get_uint64(env, argv[3], &Alt);
+  /*
+  if(Control){
+    key_down(uinp_fd, KEY_LEFTCTRL);
+  }
+  if(Shift){
+    key_down(uinp_fd, KEY_LEFTSHIFT);
+  }
+  if(Alt){
+    key_down(uinp_fd, KEY_LEFTALT);
+  }
+  */
+  //key_down(uinp_fd, keys[Key]);
+  key_up(uinp_fd, keys[Key]);
+  if(Alt){
+    key_up(uinp_fd, KEY_LEFTALT);
+  }
+  if(Shift){
+    key_up(uinp_fd, KEY_LEFTSHIFT);
+  }
+  if(Control){
+    key_up(uinp_fd, KEY_LEFTCTRL);
+  }
+  return argv[0];
+}
 static ERL_NIF_TERM key
 (ErlNifEnv* env, int argc,
  const ERL_NIF_TERM argv[])
@@ -188,8 +256,8 @@ static ERL_NIF_TERM setup
 static ErlNifFunc nif_funcs[] =
   {
    {"key", 4, key},
-   {"press", 4, key},
-   {"unpress", 4, key},
+   {"press", 4, press},
+   {"unpress", 4, unpress},
    {"setup", 1, setup}
   };
 
