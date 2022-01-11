@@ -98,4 +98,7 @@ the B button is like "control" for the next letter.
 Down on the D pad is so that the next chord will access a number or symbol instead of a letter.
 
 to run the erlang version, go to the "erlang_version" directory, and do `sh start.sh`
+
+
 If you want to customize this code, you probably want to do that in the gamepad.erl file. Specifically the chord2key function, which maps the chords on each page to their corresponding key.
+If you only want to change the letters around, edit the c2l function.

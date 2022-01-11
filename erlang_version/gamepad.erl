@@ -27,20 +27,16 @@
           page = 0,
           repeating = false
          }).
+%-record(controller, {
+%          dd = false, %7, 255
+%          dl = false, %6, 1
+%          x = false, %2
+%          y = false, %3
+%          dr = false, %6, 255
+%          du = false %7, 1
+%         }).
 
-
--record(controller, {
-          a = false, %0
-          b = false, %1
-          r = false, %5
-          dd = false, %7, 255
-          dl = false, %6, 1
-          l = false, %4
-          x = false, %2
-          y = false, %3
-          dr = false, %6, 255
-          du = false %7, 1
-         }).
+%this keeps track of which buttons are currently pressed.
 chord_event(0, 0, C) -> C#chord{a = false};
 chord_event(0, 1, C) -> C#chord{a = true};
 chord_event(1, 0, C) -> C#chord{b = false};
@@ -55,6 +51,7 @@ chord_event(4, 0, C) -> C#chord{l = false};
 chord_event(4, 1, C) -> C#chord{l = true};
 chord_event(_, _, C) -> C.
 
+%this accumulates all the pressed buttons to calculate this chord.
 accumulate_chord(0, 1, C) -> C#chord{a = true};
 accumulate_chord(1, 1, C) -> C#chord{b = true};
 accumulate_chord(5, 1, C) -> C#chord{r = true};
@@ -120,120 +117,138 @@ tap_key(A = #chord{}, P) ->
     B = chord2num(A),
     %do_chord2(B, P).
     [Key, Shift, Ctrl, Alt, P2] = 
-        chord2key(B, P),
+        chord2key2(B, P),
     keyboard:key(Key, Shift, Ctrl, Alt),
     P2.
 
+%from letter to the code that C accepts.
+l2n(a) -> 10;
+l2n(b) -> 11;
+l2n(c) -> 12;
+l2n(d) -> 13;
+l2n(e) -> 10;
+l2n(f) -> 15;
+l2n(g) -> 16;
+l2n(h) -> 17;
+l2n(i) -> 18;
+l2n(j) -> 19;
+l2n(k) -> 20;
+l2n(l) -> 21;
+l2n(m) -> 22;
+l2n(n) -> 23;
+l2n(o) -> 24;
+l2n(p) -> 25;
+l2n(q) -> 26;
+l2n(r) -> 27;
+l2n(s) -> 28;
+l2n(t) -> 29;
+l2n(u) -> 30;
+l2n(v) -> 31;
+l2n(w) -> 32;
+l2n(x) -> 33;
+l2n(y) -> 34;
+l2n(z) -> 35;
+l2n(_) -> undefined.
 
-%todo. need pages 2, 3, and 4.
+%memorization of letters.
 
-%chord2key(chord, page) ->
+% 10: e, 17: a, 33: 0, 12: u, 34: n, 20: m, 
+% 36: i, 18: h, 9: s, 48: d, 6: t, 40: r, 5: l,
+% 37: b, 44: f, 41: z, 13: j, 42: c, 21: k,
+% 49: v, 14: w, 50: x, 22: y, 38: q, 52: p
+
+%this is the part you want to edit if you want to customize which chord makes which letter.
+
+%given the chord, which letter does it encode?
+c2l(10) -> e;% 8 2
+c2l(17) -> a;% 16 1
+
+c2l(33) -> o;% 32 1
+c2l(12) -> u;% 8 4
+
+c2l(34) -> n;% 32 2
+c2l(20) -> m;% 16 4
+
+c2l(36) -> i;% 32 4
+c2l(18) -> h;% 16 2
+c2l(9) -> s;% 8 1
+
+c2l(48) -> d;% 32 16
+c2l(6) -> t;% 4 2
+
+c2l(40) -> r;% 32 8
+c2l(5) -> l;% 4 1
+
+c2l(37) -> b;% 32 4 1
+c2l(44) -> f;% 32 8 4
+
+c2l(41) -> z;% 32 8 1
+c2l(13) -> j;% 8 4 1
+
+c2l(42) -> c;% 32 8 2
+c2l(21) -> k;% 16 4 1
+
+c2l(49) -> v;% 32 16 1
+c2l(14) -> w;% 8 4 2
+
+c2l(50) -> x;% 32 16 2
+c2l(22) -> y;% 16 4 2
+
+c2l(38) -> q;% 32 4 2
+c2l(52) -> p;% 32 16 4
+c2l(_) -> undefined.
+    
+   
+%chord2key2(chord, page) ->
 %  [key, shift, control, alt, page2]
-chord2key(1, 0) -> [0,0,0,0,1];%page1
-chord2key(1, 1) -> [36,1,0,0,0];%right paren
-chord2key(2, 0) -> [0,0,0,0,3];%page 3
-chord2key(2, 1) -> [62,1,0,0,0];%right brace
-chord2key(2, 3) -> [5,0,0,0,0];%esc
-chord2key(3, 0) -> [2,0,0,0,0];%enter
-chord2key(4, 0) -> [69,0,0,0,0];%space
-chord2key(4, 1) -> [62,0,0,0,0];%right bracket
-chord2key(5, 0) -> [21,0,0,0,0];%L
-chord2key(5, 1) -> [21,1,0,0,0];
-chord2key(5, 3) -> [21,0,1,0,0];
-chord2key(6, 0) -> [29,0,0,0,0];%T
-chord2key(6, 1) -> [29,1,0,0,0];
-chord2key(6, 3) -> [29,0,1,0,0];
-chord2key(7, 0) -> [7,0,0,0,0];%right
-chord2key(7, 1) -> [7,1,0,0,0];%right carrot
-chord2key(8, 0) -> [0,0,0,0,2];%page2
-chord2key(8, 2) -> [1,0,0,0,0];%tab
-chord2key(8, 1) -> [45,1,0,0,0];%left paren
-chord2key(9, 0) -> [28,0,0,0,0];%S
-chord2key(9, 1) -> [28,1,0,0,0];
-chord2key(9, 3) -> [28,0,1,0,0];
-chord2key(10, 0) -> [14,0,0,0,0];%E
-chord2key(10, 1) -> [14,1,0,0,0];
-chord2key(10, 3) -> [14,0,1,0,0];
-chord2key(12, 0) -> [30,0,0,0,0];%U
-chord2key(12, 1) -> [30,1,0,0,0];
-chord2key(12, 3) -> [30,0,1,0,0];
-chord2key(13, 0) -> [19,0,0,0,0];%J
-chord2key(13, 1) -> [19,1,0,0,0];
-chord2key(13, 3) -> [19,0,1,0,0];
-chord2key(14, 0) -> [32,0,0,0,0];%W
-chord2key(14, 1) -> [32,1,0,0,0];
-chord2key(14, 3) -> [32,0,1,0,0];
+chord2key2(C, P) ->
+    X = l2n(c2l(C)),
+    case {X, P} of
+        {undefined, _} ->
+            chord2key(C, P);
+        {_, 0} -> [X,0,0,0,0];
+        {_, 1} -> [X,1,0,0,0];
+        {_, 3} -> [X,0,1,0,0];
+        _ -> chord2key(C, P)
+    end;
+chord2key2(C, P) ->
+    chord2key(C, P).
 
-chord2key(16, 0) -> [4,0,0,0,0];%delete
+chord2key(1, 0) -> [0,0,0,0,1];%page1
+chord2key(2, 0) -> [0,0,0,0,3];%page 3
+chord2key(8, 0) -> [0,0,0,0,2];%page2
 %chord2key(16, 0) -> [0,0,0,0,4];%page4
 
-chord2key(16, 1) -> [63,1,0,0,0];%left brace
-chord2key(17, 0) -> [10,0,0,0,0];%A
-chord2key(17, 1) -> [10,1,0,0,0];
-chord2key(17, 3) -> [10,0,1,0,0];
-chord2key(18, 0) -> [17,0,0,0,0];%H
-chord2key(18, 1) -> [17,1,0,0,0];
-chord2key(18, 3) -> [17,0,1,0,0];
-chord2key(20, 0) -> [22,0,0,0,0];%M
-chord2key(20, 1) -> [22,1,0,0,0];
-chord2key(20, 3) -> [22,3,0,0,0];
-chord2key(21, 0) -> [20,0,0,0,0];%K
-chord2key(21, 1) -> [20,1,0,0,0];
-chord2key(21, 3) -> [20,0,1,0,0];
-chord2key(22, 0) -> [34,0,0,0,0];%Y
-chord2key(22, 1) -> [34,1,0,0,0];
-chord2key(22, 3) -> [34,0,1,0,0];
-chord2key(27, 0) -> [9,0,0,0,0];%down
+chord2key(16, 0) -> [4,0,0,0,0];%delete
 chord2key(32, 0) -> [3,0,0,0,0];%backspace
+chord2key(2, 3) -> [5,0,0,0,0];%esc (double tap)
+chord2key(3, 0) -> [2,0,0,0,0];%enter
+chord2key(4, 0) -> [69,0,0,0,0];%space
+chord2key(8, 2) -> [1,0,0,0,0];%tab (double tap)
+
+chord2key(1, 1) -> [36,1,0,0,0];%right paren
+chord2key(8, 1) -> [45,1,0,0,0];%left paren
+chord2key(2, 1) -> [62,1,0,0,0];%right brace
+chord2key(16, 1) -> [63,1,0,0,0];%left brace
+chord2key(4, 1) -> [62,0,0,0,0];%right bracket
 chord2key(32, 1) -> [63,0,0,0,0];%left bracket
-chord2key(33, 0) -> [24,0,0,0,0];%O
-chord2key(33, 1) -> [24,1,0,0,0];
-chord2key(33, 3) -> [24,0,1,0,0];
-chord2key(34, 0) -> [23,0,0,0,0];%N
-chord2key(34, 1) -> [23,1,0,0,0];
-chord2key(34, 3) -> [23,0,1,0,0];
-chord2key(36, 0) -> [18,0,0,0,0];%I
-chord2key(36, 1) -> [18,1,0,0,0];
-chord2key(36, 3) -> [18,0,1,0,0];
-chord2key(37, 0) -> [11,0,0,0,0];%B
-chord2key(37, 1) -> [11,1,0,0,0];
-chord2key(37, 3) -> [11,0,1,0,0];
-chord2key(38, 0) -> [26,0,0,0,0];%Q
-chord2key(38, 1) -> [26,1,0,0,0];
-chord2key(38, 3) -> [26,0,1,0,0];
-chord2key(40, 0) -> [27,0,0,0,0];%R
-chord2key(40, 1) -> [27,1,0,0,0];
-chord2key(40, 3) -> [27,0,1,0,0];
-chord2key(41, 0) -> [35,0,0,0,0];%Z
-chord2key(41, 1) -> [35,1,0,0,0];
-chord2key(41, 3) -> [35,0,1,0,0];
-chord2key(42, 0) -> [12,0,0,0,0];%C
-chord2key(42, 1) -> [12,1,0,0,0];
-chord2key(41, 3) -> [35,0,1,0,0];
-chord2key(44, 0) -> [16,0,0,0,0];%G
-chord2key(44, 1) -> [16,1,0,0,0];
-chord2key(44, 3) -> [16,0,1,0,0];
-chord2key(45, 0) -> [15,0,0,0,0];%F
-chord2key(45, 1) -> [15,1,0,0,0];
-chord2key(45, 3) -> [15,0,1,0,0];
-chord2key(46, 1) -> [62,1,0,0,0];%right brace
-chord2key(48, 0) -> [13,0,0,0,0];%D
-chord2key(48, 1) -> [13,1,0,0,0];
-chord2key(48, 3) -> [13,0,1,0,0];
-chord2key(49, 0) -> [31,0,0,0,0];%V
-chord2key(49, 1) -> [31,1,0,0,0];
-chord2key(49, 3) -> [31,0,1,0,0];
-chord2key(50, 0) -> [33,0,0,0,0];%X
-chord2key(50, 1) -> [33,1,0,0,0];
-chord2key(50, 3) -> [33,0,1,0,0];
-chord2key(52, 0) -> [25,0,0,0,0];%P
-chord2key(52, 1) -> [25,1,0,0,0];
-chord2key(52, 3) -> [25,0,1,0,0];
-chord2key(54, 0) -> [8,0,0,0,0];%up
-chord2key(56, 0) -> [6,0,0,0,0];%left
+chord2key(7, 1) -> [7,1,0,0,0];%right carrot
 chord2key(56, 1) -> [59,1,0,0,0];%left carrot
 
-chord2key(16, 4) -> [4,0,0,0,0];%delete
+chord2key(54, 0) -> [8,0,0,0,0];%up
+chord2key(56, 0) -> [6,0,0,0,0];%left
+chord2key(7, 0) -> [7,0,0,0,0];%right
+chord2key(27, 0) -> [9,0,0,0,0];%down
+
+
+%memorization guide
+% 1: ,, 2: ., 4: ;, 5: 2, 6: 3, 8: ?, 9: _,
+% 10: 9, 12: 6, 13: @, 14: /, 16: ?, 17: 8,
+% 18: -, 20: 7, 21: +, 22: $, 32: :, 33: 4,
+% 34: 5, 36: ", 37: ?, 38: `, 40: 0, 41: &,
+% 42: *, 44: #, 45: ~, 46: |, 48: 1, 49: /, 
+% 50: %, 52: ', 53: !, 54: ^ 
+
 chord2key(1, 2) -> [59,0,0,0,0];%,
 chord2key(1, 4) -> [59,0,1,0,0];
 chord2key(2, 2) -> [60,0,0,0,0];%.
@@ -308,10 +323,6 @@ chord2key(_, 0) ->
 chord2key(K, _) -> 
     %if chord is undefined on that page, use the version from page 0 instead.
     chord2key(K, 0).
-                  
-
-    
-
 
 
 doit() ->
@@ -337,27 +348,19 @@ loop(Port, DB = #db{buttons = Buttons,
                     repeating = R}) -> 
     receive
         {_, {data, [Button, _Type, Status]}} ->
-            S = ""
-                ++ (integer_to_list(Button))
-                ++ (" ")
-                ++ (integer_to_list(Status))
-                ++("\n"),
-            %io:fwrite(S),
-            %todo. add the repeater here. if du is pressed, then hold down the most recent key until it is unpressed. 
             case {Button, Status, R} of
                 {7, 1, false} -> %start repeater
                     %press the button down and hold it.
                     [Key, Shift, Ctrl, Alt, _] = 
-                        chord2key(
+                        chord2key2(
                           chord2num(Recent), 
                           Recent#chord.page),
                     keyboard:press(Key, Shift, Ctrl, Alt),
                     %set a flag to ignore everything else until the button gets lifted.
                     loop(Port, DB#db{repeating = true});
                 {7, 0, true} -> %end repeater
-                    %unpress the button
                     [Key, Shift, Ctrl, Alt, _] = 
-                        chord2key(
+                        chord2key2(
                           chord2num(Recent), 
                           Recent#chord.page),
                     keyboard:unpress(Key, Shift, Ctrl, Alt),
