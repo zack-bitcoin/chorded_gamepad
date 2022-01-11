@@ -15,6 +15,8 @@ Uses 12 buttons in total.
 It uses 6 basic buttons to encode lower case letters, numbers, and some symbols.
 I use A, B, right bumper, down on D-pad, left on D-pad, and left bumper.
 
+The combinations of buttons that encode each key can all be configured. The default configuration is based on the idea that more common letters in english should require fewer fingers to type, and that consonants are grouped into pairs based on logical relationships in their sounds. voiced/unvoiced pairs, the nasal pair, etc.
+
 3 more buttons are for Control, Alt, and Shift. These modifiers can be combined with combinations of the 6 basic buttons to enable capital letters, CONTROL+s etc.
 I use left trigger, Y button, and right trigger.
 

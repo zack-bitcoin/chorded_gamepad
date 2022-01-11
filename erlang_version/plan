@@ -1,0 +1,255 @@
+
+abcdefghijklmnopqrstuvwxyz
+1234567890
+,./;'\[]=-`
+
+26 letters,
+10 digits
+11 others.
+
+47 keys
+
++ ctrl 47
++ shift 47
++ ctrl shift digits+others 21
++ alt (x > < % w /) 6
++ esc tab space enter backspace delete 6
++ arrow keys 4
+
+178.
+
+26 lower
+abcdefghijklmnopqrstuvwxyz
+26 upper
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+26 control letters
+10 digits
+1234567890
+10 control digits
+7 # symbols
+!@#$%^&
+7 # symbols + control
+8 paren symbols
+(){}[]<>
+8 paren symbols + control
+10 syntax symbols
+;'\:",./?`
+10 syntax symbols + control
+7 math symbols
+~-=_+|*
+7 math symbols + control
+
+6 special keys
+esc tab space enter backspace delete
+6 alt combos (x > < % w /)
+4 arrow keys
+
+
+
+
+1 of 6 is 6
+2 of 6 is 15  (13)
+3 of 6 is 20  (12)
+4 of 6 is 15  (4)
+5 of 6 is 6   (0)
+6 of 6 is 1   (0)
+
+
+limiting to 4 buttons simultanious.
+1 chord for page 0. 2 chords for pages 1-6.
+page 0 has 2, 3 or 4 buttons per chord. allowing for 2 buttons with one finger.
+pages 1-4 have 1 button for the first chord, and 1, 2, 3, or 4 buttons for the second. not allowing for 2 buttons with 1 finger.
+page 0 has 50 keys.
+pages 1-4 have 35 keys each
+
+↑ 
+© 
+± 
+¬
+
+page 0: 26 lower, f8, f9, 4 arrow, 6 alt combos, 12 extra
+page 1: 26 upper, 8 paren, enter
+page 2: 7 #, 10 syntax, 10 digits, 7 math, tab
+page 3: 26 c, 8 c-paren, esc
+page 4: 7 c#, 10 csyntax, 10 c-digits, 7 cmath, delete
+page 5: space
+page 6: backspace
+
+
+freqency
+etainoshrdlum cfwygpbvkqjxz
+
+use the extra in page 0 for: (alt x shell) (control x) (alt %) 
+1: page1
+2: page2
+3: ... 0
+4: space 
+5: L
+6: T
+7: right ....0
+8: page3
+9: S
+10: E
+11: ... 0
+12: U
+13: J  8,4,1
+14: W 8,4,2
+15: ....0
+16: page4
+17: A 
+18: H
+19: ....0
+20: M
+21: K 16,4,1
+22: X 16,4,2
+23: ....0
+24: ...0
+25: ...0
+26: ...0
+27: down ...0
+28: ...0
+29: ...0
+30: ...0
+31: unused 
+32: backspace
+33: O
+34: N
+35: ...0
+36: I 
+37: B  32,4,1
+38: Q  32,4,2
+39: ...0
+40: R
+41: Z  32,8,1
+42: C 32,8,2
+43: ...0
+44: G 32,8,4
+45: F 32,8,4,1
+46: 32,8,4,2
+47: unused
+48: D 
+49: V 32,16,1
+50: Y 32,16,2
+51: ...0
+52: P  32,16,4
+53: 32,16,4,1
+54: up 32,16,4,2
+55: unused
+56: left ...0
+57: ...0
+58: ...0
+59: unused
+60: ...0
+61: unused
+62: unused
+63: unused
+
+page1
+page 1: 26 upper, 8 paren, enter
+1: enter
+2: right parenthasis
+4: right bracket
+5: L
+6: T
+8: left brace
+9: S
+10: E
+12: U
+13: J  8,4,1
+14: W 8,4,2
+16: left parenthasis
+17: A 
+18: H
+20: M
+21: K 16,4,1
+22: X 16,4,2
+32: left bracket
+33: O
+34: N
+36: I 
+37: B  32,4,1
+38: Q  32,4,2
+40: R
+41: Z  32,8,1
+42: C 32,8,2
+44: G 32,8,4
+45: F 32,8,4,1
+46: right brace 32,8,4,2
+48: D 
+49: V 32,16,1
+50: Y 32,16,2
+52: P  32,16,4
+53: left carrot 32,16,4,1
+54: right carrot 32,16,4,2
+
+page 2: 10 syntax, 10 digits, 7 #, 7 math, tab
+'\",./?`
+23456789
+!@#$%^&
+~_
+
+1: 0 **
+2: tab
+4: ; **
+5: 
+6: 
+8: 1 **
+9: 
+10: 
+12: 
+13:  8,4,1
+14: 8,4,2
+16: = **
+17:  
+18: 
+20:
+21:  16,4,1
+22:  16,4,2
+32: : **
+33: 
+34: 
+36:  
+37:   32,4,1
+38:   32,4,2
+40: 
+41:   32,8,1
+42:  32,8,2
+44:  32,8,4
+45: + 32,8,4,1
+46: * 32,8,4,2
+48:  
+49:  32,16,1
+50:  32,16,2
+52:   32,16,4
+53: | 32,16,4,1
+54: - 32,16,4,2
+
+
+
+
+
+
+
+
+limiting to 4 buttons simultanious.
+7 pages of 29 keys. page 0 has 50, because we allow 2 buttons with one finger.
+
+page 0: 26 lower, 6 special, 10 digits, 4 arrow
+page 1: 26 upper,
+page 2: 7 #, 8 paren, 10 syntax, 4 arrow
+page 3: 7 math, 10 digits, 6 alt combos, 6 special
+page 4: 26 control
+page 5: 7 c#, 8 c-paren, 10 c-syntax
+page 6: 7 c-math, 10 c-digits,
+
+
+
+
+7 pages of 31 keys. page 0 has 50 keys, because we allow 2 buttons with one finger.
+page 0: 26 lower case. esc tab space enter backspace (19 extra:  delete, paren, ;:.,=*&%"')
+page 1: 26 upper case. 4 arrow keys. delete
+page 2: 10 digits, 8 paren, 7 # symbols, 6 alt combos
+page 3: 10 syntax symbols, 7 math symbols
+page 4: 26 control letters.
+page 5: 10 control digits, 8 control parens, 7 control # symbols
+page 6: 10 syntax + control, 7 math + control

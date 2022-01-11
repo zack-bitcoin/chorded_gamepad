@@ -35,17 +35,17 @@ void configure_keys(){
   keys[4] = KEY_ENTER;
   keys[5] = KEY_L;
   keys[6] = KEY_T;
-  keys[7] = KEY_RIGHTBRACE;
+  keys[7] = KEY_RIGHTBRACE;     
   keys[8] = KEY_A;
   keys[9] = KEY_S;
-  keys[10] = KEY_Y;
+  keys[10] = KEY_X;
   keys[11] = KEY_W;
   keys[12] = KEY_U;
   keys[13] = KEY_J;
   keys[14] = KEY_SEMICOLON;
   keys[15] = KEY_0;
   keys[16] = KEY_E;
-  keys[17] = KEY_X;
+  keys[17] = KEY_Y;
   keys[18] = KEY_H;
   keys[19] = KEY_DOT;//16, 2, 1
   keys[20] = KEY_M;
@@ -66,7 +66,7 @@ void configure_keys(){
   keys[35] = KEY_BACKSLASH;//32, 2, 1
   keys[36] = KEY_F;
   keys[37] = KEY_B;
-  keys[38] = KEY_P;
+  keys[38] = KEY_Q;
   keys[39] = KEY_6;//32, 4, 2, 1
   keys[40] = KEY_R;
   keys[41] = KEY_Z;
@@ -80,7 +80,7 @@ void configure_keys(){
   keys[49] = KEY_TAB;
   keys[50] = KEY_APOSTROPHE;//32, 16, 2
   keys[51] = KEY_ESC;
-  keys[52] = KEY_Q;
+  keys[52] = KEY_P;
   keys[53] = KEY_9;
   keys[54] = KEY_UP;
   keys[55] = KEY_RESERVED;//32, 16, 4, 2, 1
@@ -130,7 +130,7 @@ void configure_keys(){
   // ' 50; ` 22; [ 56; ] 7;
   // / 28; \ 35; ; 14; tab 49
   // - 21; = 42; . 19; , 26
-  // f8 59; f9 31;
+  // f8 28; f9 31;
   // 0 15; 1 29; 2 57; 3 43; 4 45;
   // 5 30; 6 39; 7 46; 8 60; 9 53;
 }

@@ -3,3 +3,5 @@ chorded_gamepad
 .#*
 \#*
 #*
+ebin/*
+*.beam
