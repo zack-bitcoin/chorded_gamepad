@@ -126,7 +126,7 @@ l2n(a) -> 10;
 l2n(b) -> 11;
 l2n(c) -> 12;
 l2n(d) -> 13;
-l2n(e) -> 10;
+l2n(e) -> 14;
 l2n(f) -> 15;
 l2n(g) -> 16;
 l2n(h) -> 17;
@@ -180,10 +180,10 @@ c2l(40) -> r;% 32 8
 c2l(5) -> l;% 4 1
 
 c2l(37) -> b;% 32 4 1
-c2l(44) -> f;% 32 8 4
-
+c2l(44) -> g;% 32 8 4
 c2l(41) -> z;% 32 8 1
 c2l(13) -> j;% 8 4 1
+c2l(45) -> f;% 32 8 4 1
 
 c2l(42) -> c;% 32 8 2
 c2l(21) -> k;% 16 4 1
@@ -191,28 +191,59 @@ c2l(21) -> k;% 16 4 1
 c2l(49) -> v;% 32 16 1
 c2l(14) -> w;% 8 4 2
 
-c2l(50) -> x;% 32 16 2
-c2l(22) -> y;% 16 4 2
+c2l(50) -> y;% 32 16 2
+c2l(22) -> x;% 16 4 2
 
 c2l(38) -> q;% 32 4 2
 c2l(52) -> p;% 32 16 4
 c2l(_) -> undefined.
+
+
+%modify this to change which chord is for which digit.
+chord2digit(40) -> 0;
+chord2digit(12) -> 1;
+chord2digit(10) -> 2;
+chord2digit(48) -> 3;
+chord2digit(20) -> 4;
+chord2digit(17) -> 5;
+chord2digit(33) -> 6;
+chord2digit(34) -> 7;
+chord2digit(5) -> 8;
+chord2digit(6) -> 9;
+chord2digit(_) -> undefined.
+
+%from a digit, to the code that C accepts.
+digit2code(2) -> 38;
+digit2code(3) -> 39;
+digit2code(9) -> 45;
+digit2code(6) -> 42;
+digit2code(8) -> 44;
+digit2code(7) -> 43;
+digit2code(4) -> 40;
+digit2code(5) -> 41;
+digit2code(0) -> 36;
+digit2code(1) -> 37;
+digit2code(_) -> undefined.
     
    
 %chord2key2(chord, page) ->
 %  [key, shift, control, alt, page2]
 chord2key2(C, P) ->
     X = l2n(c2l(C)),
-    case {X, P} of
-        {undefined, _} ->
-            chord2key(C, P);
-        {_, 0} -> [X,0,0,0,0];
-        {_, 1} -> [X,1,0,0,0];
-        {_, 3} -> [X,0,1,0,0];
+    Y = digit2code(chord2digit(C)),
+    case {X, Y, P} of
+        {undefined, _, 0} -> chord2key(C, P);
+        {undefined, _, 1} -> chord2key(C, P);
+        {undefined, _, 3} -> chord2key(C, P);
+        {_, undefined, 2} -> chord2key(C, P);
+        {_, undefined, 4} -> chord2key(C, P);
+        {_, _, 0} -> [X,0,0,0,0];
+        {_, _, 1} -> [X,1,0,0,0];
+        {_, _, 3} -> [X,0,1,0,0];
+        {_, _, 2} -> [Y,0,0,0,0];
+        {_, _, 4} -> [Y,0,1,0,0];
         _ -> chord2key(C, P)
-    end;
-chord2key2(C, P) ->
-    chord2key(C, P).
+    end.
 
 chord2key(1, 0) -> [0,0,0,0,1];%page1
 chord2key(2, 0) -> [0,0,0,0,3];%page 3
@@ -242,12 +273,27 @@ chord2key(27, 0) -> [9,0,0,0,0];%down
 
 
 %memorization guide
-% 1: ,, 2: ., 4: ;, 5: 2, 6: 3, 8: ?, 9: _,
-% 10: 9, 12: 6, 13: @, 14: /, 16: ?, 17: 8,
-% 18: -, 20: 7, 21: +, 22: $, 32: :, 33: 4,
-% 34: 5, 36: ", 37: ?, 38: `, 40: 0, 41: &,
-% 42: *, 44: #, 45: ~, 46: |, 48: 1, 49: /, 
-% 50: %, 52: ', 53: !, 54: ^ 
+%digits are 2 buttons each.
+%never combines 1 with 2.
+%never combines 8 with 16.
+%never combines horizontal pairs: (32, 4), (16, 2) or (8, 1).
+% 0: 40, 1: 12, 2: 10,
+% 3: 48, 4: 20, 5: 17,
+% 6: 33, 7: 34, 8: 5, 9: 6
+
+% one button
+% 1: ,, 2: ., 4: ;, 8: tab, 16: =, 32: :
+
+% two buttons (horizontal pairs)
+% 9: _, 18: -, 36: ",
+
+% three buttons
+% 13: @, 14: /, 21: +, 22: $, 37: ?, 38: `, 
+% 41: &, 42: *, 44: #, 49: \, 50: %, 52: ',
+
+% four buttons
+% 45: ~, 46: |, 53: !, 54: ^
+
 
 chord2key(1, 2) -> [59,0,0,0,0];%,
 chord2key(1, 4) -> [59,0,1,0,0];
@@ -255,46 +301,28 @@ chord2key(2, 2) -> [60,0,0,0,0];%.
 chord2key(2, 4) -> [60,0,1,0,0];
 chord2key(4, 2) -> [61,0,0,0,0];%;
 chord2key(4, 4) -> [61,0,1,0,0];%;
-chord2key(5, 2) -> [38,0,0,0,0];%2
-chord2key(5, 4) -> [38,0,1,0,0];
-chord2key(6, 2) -> [39,0,0,0,0];%3
-chord2key(6, 4) -> [39,0,1,0,0];
 chord2key(8, 4) -> [67,0,1,0,0];%=
 chord2key(9, 2) -> [68,1,0,0,0];%_
 chord2key(9, 4) -> [68,1,1,0,0];
-chord2key(10, 2) -> [45,0,0,0,0];%9
-chord2key(10, 4) -> [45,0,1,0,0];
-chord2key(12, 2) -> [42,0,0,0,0];%6
-chord2key(12, 4) -> [42,0,1,0,0];
-chord2key(13, 2) -> [32,1,0,0,0];%@ 
-chord2key(13, 4) -> [32,1,1,0,0];
+chord2key(13, 2) -> [38,1,0,0,0];%@ 
+chord2key(13, 4) -> [38,1,1,0,0];
 chord2key(14, 2) -> [65,0,0,0,0];%/
 chord2key(14, 4) -> [65,0,1,0,0];
 chord2key(16, 2) -> [67,0,0,0,0];%=
-chord2key(17, 2) -> [44,0,0,0,0];%8
-chord2key(17, 4) -> [44,0,1,0,0];
 chord2key(18, 2) -> [68,0,0,0,0];%-
 chord2key(18, 4) -> [68,0,1,0,0];
-chord2key(20, 2) -> [43,0,0,0,0];%7
-chord2key(20, 4) -> [43,0,1,0,0];
 chord2key(21, 2) -> [67,1,0,0,0];%+
 chord2key(21, 4) -> [67,1,1,0,0];
 chord2key(22, 2) -> [40,1,0,0,0];%$
 chord2key(22, 4) -> [40,1,1,0,0];
 chord2key(32, 2) -> [61,1,0,0,0];%: 
 chord2key(32, 4) -> [61,1,1,0,0]; 
-chord2key(33, 2) -> [40,0,0,0,0];%4
-chord2key(33, 4) -> [40,0,1,0,0];
-chord2key(34, 2) -> [41,0,0,0,0];%5
-chord2key(34, 4) -> [41,0,1,0,0];
 chord2key(36, 2) -> [58,1,0,0,0];%"
 chord2key(36, 4) -> [58,1,1,0,0];
 chord2key(37, 2) -> [65,1,0,0,0];%?
 chord2key(37, 4) -> [65,1,1,0,0];
 chord2key(38, 2) -> [64,0,0,0,0];%`
 chord2key(38, 4) -> [64,0,1,0,0];
-chord2key(40, 2) -> [36,0,0,0,0];%0
-chord2key(40, 4) -> [36,0,1,0,0];
 chord2key(41, 2) -> [43,1,0,0,0];%&
 chord2key(41, 4) -> [43,1,1,0,0];
 chord2key(42, 2) -> [44,1,0,0,0];%*
@@ -305,10 +333,8 @@ chord2key(45, 2) -> [64,1,0,0,0];%~
 chord2key(45, 4) -> [64,1,1,0,0];
 chord2key(46, 2) -> [66,1,0,0,0];%|
 chord2key(46, 4) -> [66,1,1,0,0];
-chord2key(48, 2) -> [37,0,0,0,0];%1
-chord2key(48, 4) -> [37,0,1,0,0];
-chord2key(49, 2) -> [65,0,0,0,0];%/
-chord2key(49, 4) -> [65,0,1,0,0];
+chord2key(49, 2) -> [66,0,0,0,0];%\
+chord2key(49, 4) -> [66,0,1,0,0];
 chord2key(50, 2) -> [41,1,0,0,0];%%
 chord2key(50, 4) -> [41,1,1,0,0];
 chord2key(52, 2) -> [58,0,0,0,0];%'
