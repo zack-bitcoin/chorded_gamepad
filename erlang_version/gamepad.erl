@@ -110,16 +110,23 @@ chord2num(#chord{a = A, b = B, r = C,
          end,
     X1 + X2 + X3 + X4 + X5 + X6.
     
-
-    %possibly emits a key press.
-    %possibly changes pages.
 tap_key(A = #chord{}, P) ->
     B = chord2num(A),
-    %do_chord2(B, P).
     [Key, Shift, Ctrl, Alt, P2] = 
         chord2key2(B, P),
     keyboard:key(Key, Shift, Ctrl, Alt),
     P2.
+
+press_key(A, P) ->
+    [Key, Shift, Ctrl, Alt, _] = 
+        chord2key2(chord2num(A), P),
+    keyboard:press(Key, Shift, Ctrl, Alt).
+
+unpress_key(A, P) ->
+    [Key, Shift, Ctrl, Alt, _] = 
+        chord2key2(chord2num(A), P),
+    keyboard:unpress(Key, Shift, Ctrl, Alt),
+    
 
 %from letter to the code that C accepts.
 l2n(a) -> 10;
@@ -200,6 +207,14 @@ c2l(_) -> undefined.
 
 
 %modify this to change which chord is for which digit.
+%digits are 2 buttons each.
+%never combines 1 with 2.
+%never combines 8 with 16.
+%never combines horizontal pairs: (32, 4), (16, 2) or (8, 1).
+% 0: 40, 1: 12, 2: 10,
+% 3: 48, 4: 20, 5: 17,
+% 6: 33, 7: 34, 8: 5, 9: 6
+
 chord2digit(40) -> 0;
 chord2digit(12) -> 1;
 chord2digit(10) -> 2;
@@ -213,16 +228,16 @@ chord2digit(6) -> 9;
 chord2digit(_) -> undefined.
 
 %from a digit, to the code that C accepts.
+digit2code(0) -> 36;
+digit2code(1) -> 37;
 digit2code(2) -> 38;
 digit2code(3) -> 39;
-digit2code(9) -> 45;
+digit2code(4) -> 40;
+digit2code(5) -> 41;
 digit2code(6) -> 42;
 digit2code(8) -> 44;
 digit2code(7) -> 43;
-digit2code(4) -> 40;
-digit2code(5) -> 41;
-digit2code(0) -> 36;
-digit2code(1) -> 37;
+digit2code(9) -> 45;
 digit2code(_) -> undefined.
     
    
@@ -273,14 +288,6 @@ chord2key(27, 0) -> [9,0,0,0,0];%down
 
 
 %memorization guide
-%digits are 2 buttons each.
-%never combines 1 with 2.
-%never combines 8 with 16.
-%never combines horizontal pairs: (32, 4), (16, 2) or (8, 1).
-% 0: 40, 1: 12, 2: 10,
-% 3: 48, 4: 20, 5: 17,
-% 6: 33, 7: 34, 8: 5, 9: 6
-
 % one button
 % 1: ,, 2: ., 4: ;, 8: tab, 16: =, 32: :
 
@@ -293,7 +300,6 @@ chord2key(27, 0) -> [9,0,0,0,0];%down
 
 % four buttons
 % 45: ~, 46: |, 53: !, 54: ^
-
 
 chord2key(1, 2) -> [59,0,0,0,0];%,
 chord2key(1, 4) -> [59,0,1,0,0];
@@ -344,20 +350,16 @@ chord2key(53, 4) -> [37,1,1,0,0];
 chord2key(54, 2) -> [42,1,0,0,0];%^
 chord2key(54, 4) -> [42,1,1,0,0];
 chord2key(_, 0) -> 
-    %undefined chord on page 0.
+    %undefined chord on page 0. do nothing.
     [0,0,0,0,0];
 chord2key(K, _) -> 
     %if chord is undefined on that page, use the version from page 0 instead.
     chord2key(K, 0).
 
-
 doit() ->
-    %P = open_port({spawn_executable, "gamepad"}, [use_stdio]),
     start("./ebin/gamepad").
-
 start(ExtPrg) ->
   spawn(?MODULE, init, [ExtPrg]).
-
 init(ExtPrg) ->
   register(gamepad, self()),
   process_flag(trap_exit, true),
@@ -377,34 +379,30 @@ loop(Port, DB = #db{buttons = Buttons,
             case {Button, Status, R} of
                 {7, 1, false} -> %start repeater
                     %press the button down and hold it.
-                    [Key, Shift, Ctrl, Alt, _] = 
-                        chord2key2(
-                          chord2num(Recent), 
-                          Recent#chord.page),
-                    keyboard:press(Key, Shift, Ctrl, Alt),
+                    press_key(Recent, 
+                              Recent#chord.page),
                     %set a flag to ignore everything else until the button gets lifted.
                     loop(Port, DB#db{repeating = true});
                 {7, 0, true} -> %end repeater
-                    [Key, Shift, Ctrl, Alt, _] = 
-                        chord2key2(
-                          chord2num(Recent), 
-                          Recent#chord.page),
-                    keyboard:unpress(Key, Shift, Ctrl, Alt),
+                    unpress_key(Recent, 
+                                Recent#chord.page),
                     loop(Port, DB#db{repeating = false});
                 {_, _, true} ->
                     %block other commands until the repeater finishes.
                     loop(Port, DB);
                 {_, _, false} ->
-            DB2 = DB#db{buttons = 
-                         chord_event(
-                           Button, Status, 
-                           Buttons),
-                     accumulated = 
-                         accumulate_chord(
-                           Button, Status,
-                           Acc)},
-            DB3 = db_event(DB2),
-            loop(Port, DB3)
+                    DB2 = DB#db{buttons = 
+                                    chord_event(
+                                      Button, 
+                                      Status, 
+                                      Buttons),
+                                accumulated = 
+                                    accumulate_chord(
+                                      Button, 
+                                      Status,
+                                      Acc)},
+                    DB3 = db_event(DB2),
+                    loop(Port, DB3)
             end;
         {'EXIT', _, normal} ->
             io:fwrite("c program halted\n");
