@@ -75,7 +75,7 @@ db_event(D = #db{buttons = B, accumulated = A,
     Bool = all_zeros_chord(B),
     if
         Bool ->
-            P2 = tap_key(A, P),
+            P2 = tap_keys(A, P),
             D#db{accumulated = #chord{}, 
                  recent = A#chord{page = P},
                  page = P2};
@@ -110,20 +110,28 @@ chord2num(#chord{a = A, b = B, r = C,
          end,
     X1 + X2 + X3 + X4 + X5 + X6.
     
-tap_key(A = #chord{}, P) ->
+tap_keys(A = #chord{}, P) ->
     B = chord2num(A),
-    [Key, Shift, Ctrl, Alt, P2] = 
-        chord2key2(B, P),
-    keyboard:key(Key, Shift, Ctrl, Alt),
-    P2.
+    L = lists:map(
+          fun([Key, Shift, Ctrl, Alt, P2]) ->
+                  keyboard:key(
+                    Key, Shift, Ctrl, Alt),
+                  P2
+          end, chord2key2(B, P)),
+    lists:last(L).
+%    [Key, Shift, Ctrl, Alt, P2] = 
+%        chord2key2(B, P),
+%    keyboard:key(Key, Shift, Ctrl, Alt),
+%    P2.
 
 press_key(A, P) ->
-    [Key, Shift, Ctrl, Alt, _] = 
+    B = chord2num(A),
+    [[Key, Shift, Ctrl, Alt, _]|_] = 
         chord2key2(chord2num(A), P),
     keyboard:press(Key, Shift, Ctrl, Alt).
 
 unpress_key(A, P) ->
-    [Key, Shift, Ctrl, Alt, _] = 
+    [[Key, Shift, Ctrl, Alt, _]|_] = 
         chord2key2(chord2num(A), P),
     keyboard:unpress(Key, Shift, Ctrl, Alt).
     
@@ -242,23 +250,45 @@ digit2code(_) -> undefined.
     
    
 %chord2key2(chord, page) ->
-%  [key, shift, control, alt, page2]
+%  [[key, shift, control, alt, page2]|...]
 chord2key2(C, P) ->
-    X = l2n(c2l(C)),
-    Y = digit2code(chord2digit(C)),
-    case {X, Y, P} of
-        {undefined, _, 0} -> chord2key(C, P);
-        {undefined, _, 1} -> chord2key(C, P);
-        {undefined, _, 3} -> chord2key(C, P);
-        {_, undefined, 2} -> chord2key(C, P);
-        {_, undefined, 4} -> chord2key(C, P);
-        {_, _, 0} -> [X,0,0,0,0];
-        {_, _, 1} -> [X,1,0,0,0];
-        {_, _, 3} -> [X,0,1,0,0];
-        {_, _, 2} -> [Y,0,0,0,0];
-        {_, _, 4} -> [Y,0,1,0,0];
-        _ -> chord2key(C, P)
+    LetterCode = l2n(c2l(C)),
+    DigitCode = digit2code(chord2digit(C)),
+    Com = command(C, P),
+    case {LetterCode, DigitCode, P, Com} of
+        {_, _, _, [_|_]} -> Com;
+        {undefined, _, 0, _} -> [chord2key(C, P)];
+        {undefined, _, 1, _} -> [chord2key(C, P)];
+        {undefined, _, 3, _} -> [chord2key(C, P)];
+        {_, undefined, 2, _} -> [chord2key(C, P)];
+        {_, undefined, 4, _} -> [chord2key(C, P)];
+        {_, _, 0, _} -> [[LetterCode,0,0,0,0]];
+        {_, _, 1, _} -> [[LetterCode,1,0,0,0]];
+        {_, _, 3, _} -> [[LetterCode,0,1,0,0]];
+        {_, _, 2, _} -> [[DigitCode,0,0,0,0]];
+        {_, _, 4, _} -> [[DigitCode,0,1,0,0]];
+        _ -> [chord2key(C, P)]
     end.
+
+command(24, 0) ->
+    [[33,0,0,1,0],%alt-x
+     [l2n(s),0,0,0,0], 
+     [l2n(h) ,0,0,0,0], 
+     [l2n(e),0,0,0,0], 
+     [l2n(l),0,0,0,0], 
+     [l2n(l),0,0,0,0]];
+command(28, 0) -> [[33,0,0,1,0]];%alt-x 
+command(35, 0) ->  [[41,1,0,1,0]];%alt-shift-5 (search and replace)
+command(39, 0) ->  [[65,0,0,1,0]];%alt-slash (guess the word)
+command(7, 0) -> [[60,1,0,1,0]];%alt-right carrot (begining of document)
+command(56, 0) -> [[59,1,0,1,0]];%alt-left carrot (end of document)
+
+
+command(_, _) -> undefined.
+%+ alt (x > < % w /) 6
+
+
+
 
 chord2key(1, 0) -> [0,0,0,0,1];%page1
 chord2key(2, 0) -> [0,0,0,0,3];%page 3
@@ -278,7 +308,7 @@ chord2key(2, 1) -> [62,1,0,0,0];%right brace
 chord2key(16, 1) -> [63,1,0,0,0];%left brace
 chord2key(4, 1) -> [62,0,0,0,0];%right bracket
 chord2key(32, 1) -> [63,0,0,0,0];%left bracket
-chord2key(7, 1) -> [7,1,0,0,0];%right carrot
+chord2key(7, 1) -> [60,1,0,0,0];%right carrot
 chord2key(56, 1) -> [59,1,0,0,0];%left carrot
 
 chord2key(54, 0) -> [8,0,0,0,0];%up
@@ -293,6 +323,7 @@ chord2key(27, 0) -> [9,0,0,0,0];%down
 
 % two buttons (horizontal pairs)
 % 9: _, 18: -, 36: ",
+
 
 % three buttons
 % 13: @, 14: /, 21: +, 22: $, 37: ?, 38: `, 
