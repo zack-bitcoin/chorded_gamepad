@@ -125,7 +125,7 @@ press_key(A, P) ->
 unpress_key(A, P) ->
     [Key, Shift, Ctrl, Alt, _] = 
         chord2key2(chord2num(A), P),
-    keyboard:unpress(Key, Shift, Ctrl, Alt),
+    keyboard:unpress(Key, Shift, Ctrl, Alt).
     
 
 %from letter to the code that C accepts.
