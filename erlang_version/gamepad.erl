@@ -70,7 +70,7 @@ all_zeros_chord(
         not(DL) and
         not(L).
 
-db_event(D = #db{buttons = B, accumulated = A, 
+tap_if_ready(D = #db{buttons = B, accumulated = A, 
               page = P}) ->
     Bool = all_zeros_chord(B),
     if
@@ -119,10 +119,6 @@ tap_keys(A = #chord{}, P) ->
                   P2
           end, chord2key2(B, P)),
     lists:last(L).
-%    [Key, Shift, Ctrl, Alt, P2] = 
-%        chord2key2(B, P),
-%    keyboard:key(Key, Shift, Ctrl, Alt),
-%    P2.
 
 press_key(A, P) ->
     B = chord2num(A),
@@ -167,12 +163,10 @@ l2n(_) -> undefined.
 
 %memorization of letters.
 
-% 10: e, 17: a, 33: 0, 12: u, 34: n, 20: m, 
+% 10: e, 17: a, 33: o, 12: u, 34: n, 20: m, 
 % 36: i, 18: h, 9: s, 48: d, 6: t, 40: r, 5: l,
-% 37: b, 44: f, 41: z, 13: j, 42: c, 21: k,
-% 49: v, 14: w, 50: x, 22: y, 38: q, 52: p
-
-%this is the part you want to edit if you want to customize which chord makes which letter.
+% 37: b, 44: g, 41: z, 13: j, 42: c, 21: k,
+% 49: v, 14: w, 50: y, 22: x, 38: q, 52: p
 
 %given the chord, which letter does it encode?
 c2l(10) -> e;% 8 2
@@ -261,28 +255,85 @@ chord2key2(C, P) ->
         {undefined, _, 1, _} -> [chord2key(C, P)];
         {undefined, _, 3, _} -> [chord2key(C, P)];
         {_, undefined, 2, _} -> [chord2key(C, P)];
-        {_, undefined, 4, _} -> [chord2key(C, P)];
+        %{_, undefined, 4, _} -> [chord2key(C, P)];
         {_, _, 0, _} -> [[LetterCode,0,0,0,0]];
         {_, _, 1, _} -> [[LetterCode,1,0,0,0]];
         {_, _, 3, _} -> [[LetterCode,0,1,0,0]];
         {_, _, 2, _} -> [[DigitCode,0,0,0,0]];
-        {_, _, 4, _} -> [[DigitCode,0,1,0,0]];
+        %{_, _, 4, _} -> [[DigitCode,0,1,0,0]];
         _ -> [chord2key(C, P)]
     end.
 
-command(24, 0) ->
-    [[33,0,0,1,0],%alt-x
+%32 + 4 + 2 + 1
+%command(39, 3) ->
+%command(28, 0) ->
+command(24, 3) ->
+    %in emacs. for opening a shell consistently.
+    [
+     %close all but current window.
+     [l2n(x),0,1,0,0],
+     [digit2code(1),0,0,0,0],
+     %create a new window
+     [l2n(x),0,1,0,0],
+     [digit2code(3),0,0,0,0],
+     %go to the new window
+     [l2n(x),0,1,0,0],
+     [l2n(o),0,0,0,0], 
+     %open a shell
+     [l2n(x),0,0,1,0],
      [l2n(s),0,0,0,0], 
-     [l2n(h) ,0,0,0,0], 
+     [l2n(h),0,0,0,0], 
      [l2n(e),0,0,0,0], 
      [l2n(l),0,0,0,0], 
-     [l2n(l),0,0,0,0]];
-command(28, 0) -> [[33,0,0,1,0]];%alt-x 
-command(35, 0) ->  [[41,1,0,1,0]];%alt-shift-5 (search and replace)
-command(39, 0) ->  [[65,0,0,1,0]];%alt-slash (guess the word)
-command(7, 0) -> [[60,1,0,1,0]];%alt-right carrot (begining of document)
-command(56, 0) -> [[59,1,0,1,0]];%alt-left carrot (end of document)
+     [l2n(l),0,0,0,0],
+     [2,0,0,0,0]%enter
+    ];
+command(28, 0) -> 
+    [
+     [l2n(x),0,1,0,0],
+     [digit2code(1),0,0,0,0]
+    ];
+command(26, 0) -> 
+    [
+     [l2n(x),0,1,0,0],
+     [l2n(o),0,0,0,0]
+    ];
+command(26, 3) -> 
+    %for opening a file in the other window
+    %C-x C-o C-x C-f
+    [
+     [l2n(x),0,1,0,0],
+     [digit2code(1),0,0,0,0],
+     [l2n(x),0,1,0,0],
+     [digit2code(3),0,0,0,0],
+     [l2n(x), 0, 1, 0, 0],
+     [l2n(o), 0, 1, 0, 0],
+     [l2n(x), 0, 1, 0, 0],
+     [l2n(f), 0, 1, 0, 0]
+    ];
 
+%alt-p (previous command in the terminal inside of emacs) 32 + 16 + 4 + 2
+%command(54, 3) -> [[l2n(p),0,0,1,0]];
+command(25, 0) -> [[l2n(p),0,0,1,0]];
+
+%alt-n (next command in the terminal inside of emacs) 4 + 2 + 1
+%command(7, 3) -> [l2n(n),0,0,1,0];
+command(11, 0) -> [l2n(n),0,0,1,0];
+
+%alt-shift-5 (search and replace) 32 + 2 + 1
+command(35, 0) ->  [[digit2code(5),1,0,1,0]];
+
+%alt-slash (guess the word) 32 + 4 + 2 + 1
+command(24, 0) ->  [[65,0,0,1,0]];
+
+%alt-left carrot (beginning of document) 32+16+8
+command(56, 3) -> [[59,1,0,1,0]];
+
+%alt-right carrot (end of document) 1+2+4
+command(7, 3) -> [[60,1,0,1,0]];
+
+%alt-x, 16 + 8 + 4
+command(28, 3) -> [[l2n(x),0,0,1,0]];
 
 command(_, _) -> undefined.
 %+ alt (x > < % w /) 6
@@ -295,12 +346,14 @@ chord2key(2, 0) -> [0,0,0,0,3];%page 3
 chord2key(8, 0) -> [0,0,0,0,2];%page2
 %chord2key(16, 0) -> [0,0,0,0,4];%page4
 
-chord2key(16, 0) -> [4,0,0,0,0];%delete
+%chord2key(16, 0) -> [4,0,0,0,0];%delete
+chord2key(16, 0) -> [1,0,0,0,0];%tab 
 chord2key(32, 0) -> [3,0,0,0,0];%backspace
 chord2key(2, 3) -> [5,0,0,0,0];%esc (double tap)
 chord2key(3, 0) -> [2,0,0,0,0];%enter
 chord2key(4, 0) -> [69,0,0,0,0];%space
-chord2key(8, 2) -> [1,0,0,0,0];%tab (double tap)
+%chord2key(8, 2) -> [1,0,0,0,0];%tab (double tap)
+chord2key(8, 2) -> [4,0,0,0,0];%delete (double tap)
 
 chord2key(1, 1) -> [36,1,0,0,0];%right paren
 chord2key(8, 1) -> [45,1,0,0,0];%left paren
@@ -333,53 +386,29 @@ chord2key(27, 0) -> [9,0,0,0,0];%down
 % 45: ~, 46: |, 53: !, 54: ^
 
 chord2key(1, 2) -> [59,0,0,0,0];%,
-chord2key(1, 4) -> [59,0,1,0,0];
 chord2key(2, 2) -> [60,0,0,0,0];%.
-chord2key(2, 4) -> [60,0,1,0,0];
 chord2key(4, 2) -> [61,0,0,0,0];%;
-chord2key(4, 4) -> [61,0,1,0,0];%;
-chord2key(8, 4) -> [67,0,1,0,0];%=
 chord2key(9, 2) -> [68,1,0,0,0];%_
-chord2key(9, 4) -> [68,1,1,0,0];
 chord2key(13, 2) -> [38,1,0,0,0];%@ 
-chord2key(13, 4) -> [38,1,1,0,0];
 chord2key(14, 2) -> [65,0,0,0,0];%/
-chord2key(14, 4) -> [65,0,1,0,0];
 chord2key(16, 2) -> [67,0,0,0,0];%=
 chord2key(18, 2) -> [68,0,0,0,0];%-
-chord2key(18, 4) -> [68,0,1,0,0];
 chord2key(21, 2) -> [67,1,0,0,0];%+
-chord2key(21, 4) -> [67,1,1,0,0];
 chord2key(22, 2) -> [40,1,0,0,0];%$
-chord2key(22, 4) -> [40,1,1,0,0];
 chord2key(32, 2) -> [61,1,0,0,0];%: 
-chord2key(32, 4) -> [61,1,1,0,0]; 
 chord2key(36, 2) -> [58,1,0,0,0];%"
-chord2key(36, 4) -> [58,1,1,0,0];
 chord2key(37, 2) -> [65,1,0,0,0];%?
-chord2key(37, 4) -> [65,1,1,0,0];
 chord2key(38, 2) -> [64,0,0,0,0];%`
-chord2key(38, 4) -> [64,0,1,0,0];
 chord2key(41, 2) -> [43,1,0,0,0];%&
-chord2key(41, 4) -> [43,1,1,0,0];
 chord2key(42, 2) -> [44,1,0,0,0];%*
-chord2key(42, 4) -> [44,1,1,0,0];
 chord2key(44, 2) -> [39,1,0,0,0];%#
-chord2key(44, 4) -> [39,1,1,0,0];
 chord2key(45, 2) -> [64,1,0,0,0];%~
-chord2key(45, 4) -> [64,1,1,0,0];
 chord2key(46, 2) -> [66,1,0,0,0];%|
-chord2key(46, 4) -> [66,1,1,0,0];
 chord2key(49, 2) -> [66,0,0,0,0];%\
-chord2key(49, 4) -> [66,0,1,0,0];
 chord2key(50, 2) -> [41,1,0,0,0];%%
-chord2key(50, 4) -> [41,1,1,0,0];
 chord2key(52, 2) -> [58,0,0,0,0];%'
-chord2key(52, 4) -> [58,0,1,0,0];
 chord2key(53, 2) -> [37,1,0,0,0];%!
-chord2key(53, 4) -> [37,1,1,0,0];
 chord2key(54, 2) -> [42,1,0,0,0];%^
-chord2key(54, 4) -> [42,1,1,0,0];
 chord2key(_, 0) -> 
     %undefined chord on page 0. do nothing.
     [0,0,0,0,0];
@@ -432,7 +461,7 @@ loop(Port, DB = #db{buttons = Buttons,
                                       Button, 
                                       Status,
                                       Acc)},
-                    DB3 = db_event(DB2),
+                    DB3 = tap_if_ready(DB2),
                     loop(Port, DB3)
             end;
         {'EXIT', _, normal} ->
