@@ -5,6 +5,8 @@ This is software so you can use a gamepad as a chorded keyboard.
 This is based on joy2chord. https://github.com/wirelessdreamer/joy2chord
 If the software in this repository doesn't work for you, maybe try out joy2chord instead.
 
+There is also a version of this software written in erlang [here](/erlang_version). The version in erlang is easier to edit, so more experimentation is happening there, and the good things will be brought back to this stable version in portable C.
+
 The buttons
 =============
 

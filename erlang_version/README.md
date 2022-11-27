@@ -10,21 +10,26 @@ It has no macro system.
 Pages
 =========
 
-page 0 is the default page.
+page 0 is the default page you return to after every command. From page 0 you can go to the other pages.
+
 page 1: 1.
+
 page 3: 2.
+
 page 2: 8.
+
+From any page, you can get back to page 0 by making a chord of all 6 buttons together.
 
 Encoding letters
 ============
 
-lower case letters are on page 0. upper case is on page 1.
+lower case letters are on page 0. upper case is on page 1. Control + letter is on page 3.
 
 in order of pairs of letters.
-% 10: e, 17: a, 33: o, 12: u, 34: n, 20: m, 
-% 36: i, 18: h, 9: s, 48: d, 6: t, 40: r, 5: l,
-% 37: b, 44: g, 41: z, 13: j, 45: f, 42: c, 21: k,
-% 49: v, 14: w, 50: x, 22: y, 38: q, 52: p
+ 10: e, 17: a, 33: o, 12: u, 34: n, 20: m, 
+ 36: i, 18: h, 9: s, 48: d, 6: t, 40: r, 5: l,
+ 37: b, 44: g, 41: z, 13: j, 45: f, 42: c, 21: k,
+ 49: v, 14: w, 50: x, 22: y, 38: q, 52: p
 
 in alphabetical order.
 % a 17, b 37, c 42, d 48, e 10, f 45, g 44, h 18, i 36, j 13, k 21, l 5, m 20, n 34, o 33, p 52, q 38, r 40, s 9, t 6, u 12, v 49, w 14, x 50, y 22, z 41
@@ -44,24 +49,36 @@ Emacs tools
 ==============
 
 on page 0:
+
 24- alt-slash (guess the word)
+
 25- alt-p (previous command in edit of evil mode)
+
 11- alt-n (next command in edit of evil mode)
+
 35- alt-shift-5 (search and replace)
 26- C-x o (go to other window)
-28- C-x 1 (expand current window)
 
-The rest of these emacs tricks are on page 3.
+28- open a file in the other window
 
-24-
-28- alt-x
-56- alt-right-carrot (beginning of document)
-7- alt-left-carrot (end of document)
-25- open a shell
-26- open a file in the other window
+on page 1:
+
+3- open a shell
+
+11- duplicate this window
+
+24- alt-x
+
+56- alt-left-carrot (beginning of document)
+
+7- alt-right-carrot (end of document)
+
+25- C-x 1 (expand current window)
+
 syntax keys
 ===========
-del 8-double, back 32, esc 2-double, enter 3, space 4, tab 16
+
+del 8-double, backspace 32, esc 2-double, enter 3, space 4, tab 16
 
 paren-brace-bracket-carrot
 ==========
@@ -71,7 +88,7 @@ all on page 1.
 paren 8 1,
 brace 16 2,
 bracket 32 4,
-carrot 56 7.
+carrot 19 26.
 
 arrow keys
 ========
@@ -83,7 +100,9 @@ symbols
 
 all on page 2.
 
-comma 1, . 2, ; 4, _ 9, @ 13, / 14, = 16, - 18, + 21, $ 22, : 32, % 36, ? 37, ` 38, & 41, * 42, # 44, ~ 45, | 46, \ 49, % 50, ' 52, ! 53, ^ 54
+number order
+
+comma 1, . 2, ; 4, _ 9, @ 13, / 14, = 16, - 18, + 21, $ 22, : 32, " 36, ? 37, ` 38, & 41, * 42, # 44, ~ 45, | 46, \ 49, % 50, ' 52, ! 53, ^ 54
 
 
 page 0
@@ -101,7 +120,7 @@ two buttons
 
 three buttons
 
-7 right, 11 alt-n, 13 j, 14 w, 19, 21 k, 22 y, 25 alt-p, 26 open-file, 28 open-shell, 35 search and replace, 37 b, 38 q, 41 z, 42 c, 44 g, 49 v, 50 y, 52 p, 56 left
+7 right, 11 alt-n, 13 j, 14 w, 19, 21 k, 22 y, 25 alt-p, 26 other-window, 28 open-file, 35 search-replace, 37 b, 38 q, 41 z, 42 c, 44 g, 49 v, 50 y, 52 p, 56 left
 
 four buttons
 
@@ -119,13 +138,13 @@ paren 8 1, brace 16 2, bracket 32 4.
 two and three buttons: upper case.
 
 three buttons
-carrot 56 7.
+%carrot 56 7.
+carrot 26 19.
 
-unused 2s
-3 24
+commands on 3 7 11 24 25 56
 
 unused 3s
-7 11 25 26 28 35 56
+19 26 28 35
 
 page 2
 ===========
@@ -134,7 +153,7 @@ numbers and symbols.
 
 one button
     
-comma 1, . 2, ; 4, tab 8, = 16, : 32
+comma 1, . 2, ; 4, delete 8, = 16, : 32
 
 two buttons
 
@@ -144,30 +163,36 @@ numbers are made with pairs of buttons that are not horizontal pairs 1+8, 2+16 o
 
 horizontal pairs of buttons
 
-_ 9, - 18, " 36 
+_ 9, - 18, " 36
 
-?? 3, ?? 24
+two buttons
+
+/ 3, \ 24
 
 three buttons
 
-@ 13, / 14, + 21, $ 22, ? 37, ` 38, & 41, * 42, # 44, \ 49, % 50, ' 52
+! 7, @ 13, ~ 19, + 21, $ 22, ? 37, ` 38, & 41, * 42, # 44, % 50, ' 52, | 56
 
-unused 2s
-3 24
+four buttons
+
+54 ^
+
 
 unused 3s
-7 11 19 25 26 28 35 56
+11 14 25 26 28 35 49
 
 page 3
 ===========
 
-control + letter, and some commands.
+control + letter
 
-28 alt-x
-56 beginning of document
-7 end of document
+
+2 button combos
+===========
+
+3 5 6 9 10 12 17 18 20 24 33 34 36 40 48
 
 3 button combos
 ===========
 
-7 11 14 19 21 22 25 26 28 35 37 38 41 42 44 49 50 52 56
+7 11 13 14 19 21 22 25 26 28 35 37 38 41 42 44 49 50 52 56

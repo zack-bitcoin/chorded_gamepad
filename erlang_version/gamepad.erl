@@ -21,11 +21,11 @@
           page = 0
          }).
 -record(db, {
-          buttons = #chord{},
-          accumulated = #chord{},
-          recent = #chord{},
-          page = 0,
-          repeating = false
+          buttons = #chord{},%the buttons being held down at this moment.
+          accumulated = #chord{},%the buttons pressed so far in creating the current cord.
+          recent = #chord{},%most recent chord created.
+          page = 0,%which page are we on?
+          repeating = false%is the repeater being held down?
          }).
 %-record(controller, {
 %          dd = false, %7, 255
@@ -49,6 +49,11 @@ chord_event(6, 0, C) -> C#chord{dl = false};
 chord_event(6, 1, C) -> C#chord{dl = true};
 chord_event(4, 0, C) -> C#chord{l = false};
 chord_event(4, 1, C) -> C#chord{l = true};
+%chord_event(4, 0, C) -> C#chord{l = false};
+%chord_event(4, 1, C) -> C#chord{l = true};
+%chord_event(2, -32767, C) -> C#chord{l = false};
+%chord_event(2, 0, C) -> C#chord{l = false};
+%chord_event(2, N, C) when N > -32767 -> C#chord{l = true};
 chord_event(_, _, C) -> C.
 
 %this accumulates all the pressed buttons to calculate this chord.
@@ -82,32 +87,19 @@ tap_if_ready(D = #db{buttons = B, accumulated = A,
         true -> D
     end.
 
+num_if(A, N) ->
+    if
+        A -> N;
+        true -> 0
+    end.
 chord2num(#chord{a = A, b = B, r = C, 
                  dd = D, dl = E, l = F}) ->
-    X1 = if
-             A -> 1;
-             true -> 0
-         end,
-    X2 = if
-             B -> 2;
-             true -> 0
-         end,
-    X3 = if
-             C -> 4;
-             true -> 0
-         end,
-    X4 = if
-             D -> 8;
-             true -> 0
-         end,
-    X5 = if
-             E -> 16;
-             true -> 0
-         end,
-    X6 = if
-             F -> 32;
-             true -> 0
-         end,
+    X1 = num_if(A, 1),
+    X2 = num_if(B, 2),
+    X3 = num_if(C, 4),
+    X4 = num_if(D, 8),
+    X5 = num_if(E, 16),
+    X6 = num_if(F, 32),
     X1 + X2 + X3 + X4 + X5 + X6.
     
 tap_keys(A = #chord{}, P) ->
@@ -121,7 +113,6 @@ tap_keys(A = #chord{}, P) ->
     lists:last(L).
 
 press_key(A, P) ->
-    B = chord2num(A),
     [[Key, Shift, Ctrl, Alt, _]|_] = 
         chord2key2(chord2num(A), P),
     keyboard:press(Key, Shift, Ctrl, Alt).
@@ -267,7 +258,8 @@ chord2key2(C, P) ->
 %32 + 4 + 2 + 1
 %command(39, 3) ->
 %command(28, 0) ->
-command(24, 3) ->
+%command(24, 3) ->
+command(3, 1) ->
     %in emacs. for opening a shell consistently.
     [
      %close all but current window.
@@ -288,7 +280,8 @@ command(24, 3) ->
      [l2n(l),0,0,0,0],
      [2,0,0,0,0]%enter
     ];
-command(28, 0) -> 
+command(25, 1) -> 
+    %expand current window
     [
      [l2n(x),0,1,0,0],
      [digit2code(1),0,0,0,0]
@@ -298,26 +291,32 @@ command(26, 0) ->
      [l2n(x),0,1,0,0],
      [l2n(o),0,0,0,0]
     ];
-command(26, 3) -> 
+command(28, 0) -> 
     %for opening a file in the other window
     %C-x C-o C-x C-f
     [
-     [l2n(x),0,1,0,0],
-     [digit2code(1),0,0,0,0],
-     [l2n(x),0,1,0,0],
-     [digit2code(3),0,0,0,0],
+     %[l2n(x),0,1,0,0],
+     %[digit2code(1),0,0,0,0],
+     %[l2n(x),0,1,0,0],
+     %[digit2code(3),0,0,0,0],
      [l2n(x), 0, 1, 0, 0],
      [l2n(o), 0, 1, 0, 0],
      [l2n(x), 0, 1, 0, 0],
      [l2n(f), 0, 1, 0, 0]
     ];
+command(11, 1) -> 
+    %duplicate current window
+    [
+     [l2n(x),0,1,0,0],
+     [digit2code(1),0,0,0,0],
+     [l2n(x),0,1,0,0],
+     [digit2code(3),0,0,0,0]
+    ];
 
 %alt-p (previous command in the terminal inside of emacs) 32 + 16 + 4 + 2
-%command(54, 3) -> [[l2n(p),0,0,1,0]];
 command(25, 0) -> [[l2n(p),0,0,1,0]];
 
 %alt-n (next command in the terminal inside of emacs) 4 + 2 + 1
-%command(7, 3) -> [l2n(n),0,0,1,0];
 command(11, 0) -> [l2n(n),0,0,1,0];
 
 %alt-shift-5 (search and replace) 32 + 2 + 1
@@ -327,13 +326,13 @@ command(35, 0) ->  [[digit2code(5),1,0,1,0]];
 command(24, 0) ->  [[65,0,0,1,0]];
 
 %alt-left carrot (beginning of document) 32+16+8
-command(56, 3) -> [[59,1,0,1,0]];
+command(56, 1) -> [[59,1,0,1,0]];
 
 %alt-right carrot (end of document) 1+2+4
-command(7, 3) -> [[60,1,0,1,0]];
+command(7, 1) -> [[60,1,0,1,0]];
 
 %alt-x, 16 + 8 + 4
-command(28, 3) -> [[l2n(x),0,0,1,0]];
+command(24, 1) -> [[l2n(x),0,0,1,0]];
 
 command(_, _) -> undefined.
 %+ alt (x > < % w /) 6
@@ -341,18 +340,16 @@ command(_, _) -> undefined.
 
 
 
+chord2key(63, _) -> [0,0,0,0,0];%page0 pressing all buttons takes you back to page 0.
 chord2key(1, 0) -> [0,0,0,0,1];%page1
 chord2key(2, 0) -> [0,0,0,0,3];%page 3
 chord2key(8, 0) -> [0,0,0,0,2];%page2
-%chord2key(16, 0) -> [0,0,0,0,4];%page4
 
-%chord2key(16, 0) -> [4,0,0,0,0];%delete
 chord2key(16, 0) -> [1,0,0,0,0];%tab 
 chord2key(32, 0) -> [3,0,0,0,0];%backspace
 chord2key(2, 3) -> [5,0,0,0,0];%esc (double tap)
 chord2key(3, 0) -> [2,0,0,0,0];%enter
 chord2key(4, 0) -> [69,0,0,0,0];%space
-%chord2key(8, 2) -> [1,0,0,0,0];%tab (double tap)
 chord2key(8, 2) -> [4,0,0,0,0];%delete (double tap)
 
 chord2key(1, 1) -> [36,1,0,0,0];%right paren
@@ -361,8 +358,10 @@ chord2key(2, 1) -> [62,1,0,0,0];%right brace
 chord2key(16, 1) -> [63,1,0,0,0];%left brace
 chord2key(4, 1) -> [62,0,0,0,0];%right bracket
 chord2key(32, 1) -> [63,0,0,0,0];%left bracket
-chord2key(7, 1) -> [60,1,0,0,0];%right carrot
-chord2key(56, 1) -> [59,1,0,0,0];%left carrot
+%chord2key(7, 1) -> [60,1,0,0,0];%right carrot
+chord2key(19, 1) -> [60,1,0,0,0];%right carrot
+%chord2key(56, 1) -> [59,1,0,0,0];%left carrot
+chord2key(26, 1) -> [59,1,0,0,0];%left carrot
 
 chord2key(54, 0) -> [8,0,0,0,0];%up
 chord2key(56, 0) -> [6,0,0,0,0];%left
@@ -387,14 +386,17 @@ chord2key(27, 0) -> [9,0,0,0,0];%down
 
 chord2key(1, 2) -> [59,0,0,0,0];%,
 chord2key(2, 2) -> [60,0,0,0,0];%.
+chord2key(3, 2) -> [65,0,0,0,0];%/
 chord2key(4, 2) -> [61,0,0,0,0];%;
+chord2key(7, 2) -> [37,1,0,0,0];%!
 chord2key(9, 2) -> [68,1,0,0,0];%_
 chord2key(13, 2) -> [38,1,0,0,0];%@ 
-chord2key(14, 2) -> [65,0,0,0,0];%/
 chord2key(16, 2) -> [67,0,0,0,0];%=
 chord2key(18, 2) -> [68,0,0,0,0];%-
+chord2key(19, 2) -> [64,1,0,0,0];%~
 chord2key(21, 2) -> [67,1,0,0,0];%+
 chord2key(22, 2) -> [40,1,0,0,0];%$
+chord2key(24, 2) -> [66,0,0,0,0];%\
 chord2key(32, 2) -> [61,1,0,0,0];%: 
 chord2key(36, 2) -> [58,1,0,0,0];%"
 chord2key(37, 2) -> [65,1,0,0,0];%?
@@ -402,13 +404,10 @@ chord2key(38, 2) -> [64,0,0,0,0];%`
 chord2key(41, 2) -> [43,1,0,0,0];%&
 chord2key(42, 2) -> [44,1,0,0,0];%*
 chord2key(44, 2) -> [39,1,0,0,0];%#
-chord2key(45, 2) -> [64,1,0,0,0];%~
-chord2key(46, 2) -> [66,1,0,0,0];%|
-chord2key(49, 2) -> [66,0,0,0,0];%\
 chord2key(50, 2) -> [41,1,0,0,0];%%
 chord2key(52, 2) -> [58,0,0,0,0];%'
-chord2key(53, 2) -> [37,1,0,0,0];%!
 chord2key(54, 2) -> [42,1,0,0,0];%^
+chord2key(56, 2) -> [66,1,0,0,0];%|
 chord2key(_, 0) -> 
     %undefined chord on page 0. do nothing.
     [0,0,0,0,0];
@@ -434,23 +433,30 @@ loop(Port, DB = #db{buttons = Buttons,
                     accumulated = Acc, 
                     recent = Recent,
                     repeating = R}) -> 
+    io:fwrite("main loop\n"),
     receive
-        {_, {data, [Button, _Type, Status]}} ->
+        {_, {data, [Button, Type, Status]}} ->
+            io:fwrite(integer_to_list(Button)),
+            io:fwrite("\n"),
             case {Button, Status, R} of
                 {7, 1, false} -> %start repeater
                     %press the button down and hold it.
+                    io:fwrite("press repeater\n"),
                     press_key(Recent, 
                               Recent#chord.page),
                     %set a flag to ignore everything else until the button gets lifted.
                     loop(Port, DB#db{repeating = true});
                 {7, 0, true} -> %end repeater
+                    io:fwrite("unpress repeater\n"),
                     unpress_key(Recent, 
                                 Recent#chord.page),
                     loop(Port, DB#db{repeating = false});
                 {_, _, true} ->
                     %block other commands until the repeater finishes.
+                    io:fwrite("blocking\n"),
                     loop(Port, DB);
                 {_, _, false} ->
+                    io:fwrite("press button\n"),
                     DB2 = DB#db{buttons = 
                                     chord_event(
                                       Button, 
@@ -461,7 +467,9 @@ loop(Port, DB = #db{buttons = Buttons,
                                       Button, 
                                       Status,
                                       Acc)},
+                    io:fwrite("tap if ready\n"),
                     DB3 = tap_if_ready(DB2),
+                    io:fwrite("recurse\n"),
                     loop(Port, DB3)
             end;
         {'EXIT', _, normal} ->
