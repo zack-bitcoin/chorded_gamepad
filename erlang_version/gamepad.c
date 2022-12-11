@@ -43,7 +43,12 @@ int process_events
   int type_check = js.type & ~JS_EVENT_INIT;
   if((type_check == JS_EVENT_BUTTON)||
      ((type_check == JS_EVENT_AXIS) &&
-      ((js.number == 6) ||
+    // iNNEXT
+      ((js.number == 0) ||
+       (js.number == 1)//))){
+    // Logitech
+       ||
+       (js.number == 6) ||
        (js.number == 7)))){
       //js.number is the button.
       //js.type is the type.

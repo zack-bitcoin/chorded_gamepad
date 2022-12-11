@@ -85,6 +85,8 @@ keys[66] = KEY_BACKSLASH;
 keys[67] = KEY_EQUAL;
 keys[68] = KEY_MINUS;
 keys[69] = KEY_SPACE;
+keys[70] = KEY_PAGEUP;
+keys[71] = KEY_PAGEDOWN;
 //keys[68] = KEY_PRINTSCREEN;
 //keys[60] = KEY_QUESTION_MARK;     
 }

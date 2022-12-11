@@ -11,6 +11,26 @@
 
 %6 and 7 have 2 directions. 1 and 255. 0 is neutral.
 
+
+-define(innext, true).
+%innext
+-ifdef(innext).
+-define(a, 2).
+-define(b, 1).
+-define(r, 5).
+-define(dd, 1).
+-define(dl, 0).
+-define(l, 4).
+-else.
+%logitech
+-define(a, 0).
+-define(b, 1).
+-define(r, 5).
+-define(dd, 7).
+-define(dl, 6).
+-define(l, 4).
+-endif.
+
 -record(chord, {
           a = false, %0 button number
           b = false, %1
@@ -37,33 +57,38 @@
 %         }).
 
 %this keeps track of which buttons are currently pressed.
-chord_event(0, 0, C) -> C#chord{a = false};
-chord_event(0, 1, C) -> C#chord{a = true};
-chord_event(1, 0, C) -> C#chord{b = false};
-chord_event(1, 1, C) -> C#chord{b = true};
-chord_event(5, 0, C) -> C#chord{r = false};
-chord_event(5, 1, C) -> C#chord{r = true};
-chord_event(7, 0, C) -> C#chord{dd = false};
-chord_event(7, 255, C) -> C#chord{dd = true};
-chord_event(6, 0, C) -> C#chord{dl = false};
-chord_event(6, 1, C) -> C#chord{dl = true};
-chord_event(4, 0, C) -> C#chord{l = false};
-chord_event(4, 1, C) -> C#chord{l = true};
-%chord_event(4, 0, C) -> C#chord{l = false};
-%chord_event(4, 1, C) -> C#chord{l = true};
-%chord_event(2, -32767, C) -> C#chord{l = false};
-%chord_event(2, 0, C) -> C#chord{l = false};
-%chord_event(2, N, C) when N > -32767 -> C#chord{l = true};
-chord_event(_, _, C) -> C.
+
+
+chord_event(?a, 1, 0, C) -> C#chord{a = false};
+chord_event(?a, 1, 1, C) -> C#chord{a = true};
+chord_event(?b, 1, 0, C) -> C#chord{b = false};
+chord_event(?b, 1, 1, C) -> C#chord{b = true};
+chord_event(?r, 1, 0, C) -> C#chord{r = false};
+chord_event(?r, 1, 1, C) -> C#chord{r = true};
+chord_event(?dd, 2, 0, C) -> C#chord{dd = false};
+chord_event(?dd, 2, 255, C) -> C#chord{dd = true};
+chord_event(?dl, 2, 0, C) -> C#chord{dl = false};
+chord_event(?dl, 2, 1, C) -> C#chord{dl = true};
+chord_event(?l, 1, 0, C) -> C#chord{l = false};
+chord_event(?l, 1, 1, C) -> C#chord{l = true};
+chord_event(_, _, _, C) -> C.
 
 %this accumulates all the pressed buttons to calculate this chord.
-accumulate_chord(0, 1, C) -> C#chord{a = true};
-accumulate_chord(1, 1, C) -> C#chord{b = true};
-accumulate_chord(5, 1, C) -> C#chord{r = true};
-accumulate_chord(7, 255, C) -> C#chord{dd = true};
-accumulate_chord(6, 1, C) -> C#chord{dl = true};
-accumulate_chord(4, 1, C) -> C#chord{l = true};
-accumulate_chord(_, _, C) -> C.
+accumulate_chord(?a, 1, 1, C) -> C#chord{a = true};
+accumulate_chord(?b, 1, 1, C) -> C#chord{b = true};
+accumulate_chord(?r, 1, 1, C) -> C#chord{r = true};
+accumulate_chord(?dd, 2, 255, C) ->C#chord{dd = true};
+%accumulate_chord(?dl, 1, 1, C) -> %for outside arrow
+accumulate_chord(?dl, 2, 1, C) -> %for inside arrow
+    C#chord{dl = true};
+accumulate_chord(?l, 1, 1, C) -> C#chord{l = true};
+accumulate_chord(_A, _T, _B, C) -> 
+%    io:fwrite("button pressed: "),
+%    io:fwrite(integer_to_list(A)),
+%    io:fwrite(" "),
+%    io:fwrite(integer_to_list(B)),
+%    io:fwrite("\n"),
+    C.
 
 all_zeros_chord(
   #chord{a = A, b = B, r = R, 
@@ -101,15 +126,25 @@ chord2num(#chord{a = A, b = B, r = C,
     X5 = num_if(E, 16),
     X6 = num_if(F, 32),
     X1 + X2 + X3 + X4 + X5 + X6.
+
+filter_bad_keys([X = [_, _, _, _, _]|T]) ->
+    [X|filter_bad_keys(T)];
+filter_bad_keys([X|T]) ->
+    %io:fwrite(X),
+    filter_bad_keys(T);
+filter_bad_keys([]) -> [].
+
     
 tap_keys(A = #chord{}, P) ->
     B = chord2num(A),
+    Keys = chord2key2(B, P),
+    Keys2 = filter_bad_keys(Keys),
     L = lists:map(
           fun([Key, Shift, Ctrl, Alt, P2]) ->
                   keyboard:key(
                     Key, Shift, Ctrl, Alt),
                   P2
-          end, chord2key2(B, P)),
+          end, Keys2),
     lists:last(L).
 
 press_key(A, P) ->
@@ -317,7 +352,7 @@ command(11, 1) ->
 command(25, 0) -> [[l2n(p),0,0,1,0]];
 
 %alt-n (next command in the terminal inside of emacs) 4 + 2 + 1
-command(11, 0) -> [l2n(n),0,0,1,0];
+command(11, 0) -> [[l2n(n),0,0,1,0]];
 
 %alt-shift-5 (search and replace) 32 + 2 + 1
 command(35, 0) ->  [[digit2code(5),1,0,1,0]];
@@ -333,6 +368,15 @@ command(7, 1) -> [[60,1,0,1,0]];
 
 %alt-x, 16 + 8 + 4
 command(24, 1) -> [[l2n(x),0,0,1,0]];
+
+%control alt left
+command(56, 3) -> [[6,0,1,1,0]];
+%control alt right
+command(7, 3) -> [[7,0,1,1,0]];
+%control pageup
+command(54, 3) -> [[70,0,1,0,0]];
+%control pagedown
+command(27, 3) -> [[71,0,1,0,0]];
 
 command(_, _) -> undefined.
 %+ alt (x > < % w /) 6
@@ -433,43 +477,45 @@ loop(Port, DB = #db{buttons = Buttons,
                     accumulated = Acc, 
                     recent = Recent,
                     repeating = R}) -> 
-    io:fwrite("main loop\n"),
+    %io:fwrite("main loop\n"),
     receive
         {_, {data, [Button, Type, Status]}} ->
-            io:fwrite(integer_to_list(Button)),
-            io:fwrite("\n"),
-            case {Button, Status, R} of
-                {7, 1, false} -> %start repeater
+            %io:fwrite(integer_to_list(Button)),
+            %io:fwrite("\n"),
+            case {Button, Status, Type, R} of
+                {?dd, 1, 2, false} -> %start repeater
                     %press the button down and hold it.
-                    io:fwrite("press repeater\n"),
+                    %io:fwrite("press repeater\n"),
                     press_key(Recent, 
                               Recent#chord.page),
                     %set a flag to ignore everything else until the button gets lifted.
                     loop(Port, DB#db{repeating = true});
-                {7, 0, true} -> %end repeater
-                    io:fwrite("unpress repeater\n"),
+                {?dd, 0, 2, true} -> %end repeater
+                    %!io:fwrite("unpress repeater\n"),
                     unpress_key(Recent, 
                                 Recent#chord.page),
                     loop(Port, DB#db{repeating = false});
-                {_, _, true} ->
+                {_, _, _, true} ->
                     %block other commands until the repeater finishes.
                     io:fwrite("blocking\n"),
                     loop(Port, DB);
-                {_, _, false} ->
-                    io:fwrite("press button\n"),
+                {_, _, _, false} ->
+                    %io:fwrite("press button\n"),
                     DB2 = DB#db{buttons = 
                                     chord_event(
                                       Button, 
+                                      Type,
                                       Status, 
                                       Buttons),
                                 accumulated = 
                                     accumulate_chord(
                                       Button, 
+                                      Type,
                                       Status,
                                       Acc)},
-                    io:fwrite("tap if ready\n"),
+                    %io:fwrite("tap if ready\n"),
                     DB3 = tap_if_ready(DB2),
-                    io:fwrite("recurse\n"),
+                    %io:fwrite("recurse\n"),
                     loop(Port, DB3)
             end;
         {'EXIT', _, normal} ->

@@ -186,6 +186,9 @@ page 3
 
 control + letter
 
+control + alt + left: 56
+control + alt + right: 7
+
 
 2 button combos
 ===========
