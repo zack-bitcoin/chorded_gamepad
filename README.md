@@ -104,3 +104,8 @@ to run the erlang version, go to the "erlang_version" directory, and do `sh star
 
 If you want to customize this code, you probably want to do that in the gamepad.erl file. Specifically the chord2key function, which maps the chords on each page to their corresponding key.
 If you only want to change the letters around, edit the c2l function.
+
+Erlang Version 2
+==========
+now there are 5 pages instead of 4, we don't use buttons on the d-pad that are at right angles. we don't use buttons 8 and 16 together.
+A bunch of commands were moved around to make this work.

@@ -7,6 +7,29 @@ This version uses 4 pages. So, there are some chords that require tapping a butt
 
 It has no macro system.
 
+Buttons and chords
+=========
+
+There are 6 buttons that can make up a chord.
+2 controlled with each thumb, and 1 with each pointer finger.
+Each button has a value:
+The lower right thumb button has value 1.
+The upper right thumb button has value 2.
+the right pointer button has value of 4.
+the lower left thumb button has value 8.
+the upper left thumb button has value 16.
+the left pointer button has value of 32.
+
+A chord is made of 3 buttons or fewer.
+
+The value of a chord is the sum of it's buttons.
+for example:
+If you press the 2 buttons with your right thumb, that has a value of 1+2 = 3.
+If you press with both your pointer fingers, that has a value of 32 + 4 = 36.
+
+The 2 left thumb buttons are never used together in a chord.
+So, these chords are not used, even though they have less than 4 buttons.: 24, 25, 26, 28, 56
+
 Pages
 =========
 
@@ -18,7 +41,7 @@ page 3: 2.
 
 page 2: 8.
 
-From any page, you can get back to page 0 by making a chord of all 6 buttons together.
+From any page, you can get back to page 0 by making a chord that has more than 3 buttons.
      
 Encoding letters
 ============
@@ -39,7 +62,7 @@ numbers
 
 numbers are all on page 2
 
-0 40, 1 12, 2 10, 3 48, 4 20, 5 17, 6 33, 7 34, 8 5, 9 6
+0 5, 1 17, 2 33, 3 6, 4 10, 5 34, 6 12, 7 20, 8 40, 9 48
 
 all digits are a chord of only 2 buttons.
 Never combine 2 buttons horizontally 1+8, 2+16, or 4+32.
@@ -50,48 +73,56 @@ Emacs tools
 
 on page 0:
 
-24- alt-slash (guess the word)
+35- alt-p (previous command in edit of evil mode)
 
-25- alt-p (previous command in edit of evil mode)
+19- alt-n (next command in edit of evil mode)
 
-11- alt-n (next command in edit of evil mode)
+on page 2:
 
-35- alt-shift-5 (search and replace)
-
-26- C-x o (go to other window)
-
-28- open a file in the other window
-
-on page 1:
-
-3- open a shell
-
-11- duplicate this window
-
-19- C-x C-s (save this page)
-
-24- alt-x
-
-56- alt-left-carrot (beginning of document)
-
-7- alt-right-carrot (end of document)
-
-25- C-x 1 (expand current window)
+9- alt-slash (guess the word)
 
 on page 3:
+
+1 - control pagedown (change tab in terminal)
+
+8- control pageup (change tab in terminal)
 
 4- control alt right arrow (changing desktop in ubuntu)
 
 32- control alt left arrow (changing desktop in ubuntu)
 
-8- control pageup (change tab in terminal)
+7- alt-right_carrot
 
-1 - control pagedown (change tab in terminal)
+35- alt-left_carrot
+
+16- save
+
+on page 4:
+
+
+3- alt-shift-5 (search and replace)
+
+4- open a file in the other window
+
+6- alt-x
+
+8- open a shell
+
+9- C-x 1 (expand current window)
+
+16- C-x o (go to other window)
+
+32- duplicate this window
+
+
 
 syntax keys
 ===========
 
-del 8-double, backspace 32, esc 2-double, enter 3, space 4, tab 16
+del page 4, chord 48. (same chord as 'd')
+
+
+backspace 32, esc 2-double, enter 3, space 4, tab 7
 
 paren-brace-bracket-carrot
 ==========
@@ -101,21 +132,25 @@ all on page 1.
 paren 8 1,
 brace 16 2,
 bracket 32 4,
-carrot 26 28.
+carrot 35 7.
 
 arrow keys
 ========
 
-up 54, left 56, right 7, down 27.
+all on page 4
+
+up 2, left 40, right 5, down 1.
 
 symbols
 ============
 
-all on page 2.
+on page 1.
+| 3
 
-number order
 
-comma 1, . 2, / 3, ; 4, _ 9, @ 13, = 16, - 18, + 21, $ 22, \ 24, : 32, " 36, ? 37, ` 38, & 41, * 42, # 44, ~ 45, | 46, % 50, ' 52, ! 53, ^ 54
+on page 2.
+
+comma 1, . 2, / 3, ; 4, ! 7,_ 9, ~ 11, @ 13, = 16, - 18, + 21, $ 22, \ 24, : 32, " 36, ? 37, ` 38, & 41, * 42, # 44, ^ 49, % 50, ' 52
 
 
 page 0
@@ -125,19 +160,16 @@ lower case letters, the ability to go to other pages, and some tools we want fas
 
 one button
 
-page 1, page 3, space, page 2, delete, backspace
+page 1, page 3, space, page 2, page 4, backspace
 
 two buttons
 
-3 enter, 5 l, 6 t, 9 s, 10 e, 12 u, 17 a, 18 h, 20 m, 24 guess-word, 33 o, 34 n, 36 i, 40 r, 48 d
+3 enter, 5 l, 6 t, 9 s, 10 e, 12 u, 17 a, 18 h, 20 m, 33 o, 34 n, 36 i, 40 r, 48 d
 
 three buttons
 
-7 right, 11 alt-n, 13 j, 14 w, 19, 21 k, 22 y, 25 alt-p, 26 other-window, 28 open-file, 35 search-replace, 37 b, 38 q, 41 z, 42 c, 44 g, 49 v, 50 y, 52 p, 56 left
+7 tab, 11 f, 13 j, 14 w, 19, 21 k, 22 y, 25 alt-p, 35 a-p, 37 b, 38 q, 41 z, 42 c, 44 g, 49 v, 50 y, 52 p 
 
-four buttons
-
-45 f, 54 up, 27 down
 
 page 1
 ===========

@@ -21,6 +21,7 @@
 -define(dd, 1).
 -define(dl, 0).
 -define(l, 4).
+-define(x, 0).
 -else.
 %logitech
 -define(a, 0).
@@ -36,7 +37,8 @@
           b = false, %1
           r = false, %5
           dd = false, %7, 255
-          dl = false, %6, 1
+          %dl = false, %6, 1
+          du = false, %6, 1
           l = false, %4
           page = 0
          }).
@@ -65,12 +67,17 @@ chord_event(?b, 1, 0, C) -> C#chord{b = false};
 chord_event(?b, 1, 1, C) -> C#chord{b = true};
 chord_event(?r, 1, 0, C) -> C#chord{r = false};
 chord_event(?r, 1, 1, C) -> C#chord{r = true};
-chord_event(?dd, 2, 0, C) -> C#chord{dd = false};
+%chord_event(?dd, 2, 0, C) -> C#chord{dd = false};
+chord_event(?dd, 2, 0, C) -> C#chord{dd = false, du = false};
 chord_event(?dd, 2, 255, C) -> C#chord{dd = true};
-chord_event(?dl, 2, 0, C) -> C#chord{dl = false};
-chord_event(?dl, 2, 1, C) -> C#chord{dl = true};
+%chord_event(?dl, 2, 0, C) -> C#chord{dl = false};
+%chord_event(?dl, 2, 1, C) -> C#chord{dl = true};
+%chord_event(?dd, 2, 0, C) -> C#chord{dl = false};
+chord_event(?dd, 2, 1, C) -> C#chord{du = true};
 chord_event(?l, 1, 0, C) -> C#chord{l = false};
 chord_event(?l, 1, 1, C) -> C#chord{l = true};
+chord_event(?x, 1, 0, C) -> C#chord{l = false};
+chord_event(?x, 1, 1, C) -> C#chord{l = true};
 chord_event(_, _, _, C) -> C.
 
 %this accumulates all the pressed buttons to calculate this chord.
@@ -78,9 +85,9 @@ accumulate_chord(?a, 1, 1, C) -> C#chord{a = true};
 accumulate_chord(?b, 1, 1, C) -> C#chord{b = true};
 accumulate_chord(?r, 1, 1, C) -> C#chord{r = true};
 accumulate_chord(?dd, 2, 255, C) ->C#chord{dd = true};
-%accumulate_chord(?dl, 1, 1, C) -> %for outside arrow
-accumulate_chord(?dl, 2, 1, C) -> %for inside arrow
-    C#chord{dl = true};
+%accumulate_chord(?dl, 2, 1, C) -> %for inside arrow
+accumulate_chord(?dd, 2, 1, C) -> %for inside arrow
+    C#chord{du = true};
 accumulate_chord(?l, 1, 1, C) -> C#chord{l = true};
 accumulate_chord(_A, _T, _B, C) -> 
 %    io:fwrite("button pressed: "),
@@ -92,7 +99,7 @@ accumulate_chord(_A, _T, _B, C) ->
 
 all_zeros_chord(
   #chord{a = A, b = B, r = R, 
-         dd = DD, dl = DL, l = L}) ->
+         dd = DD, du = DL, l = L}) ->
     not(A) and
         not(B) and
         not(R) and
@@ -118,7 +125,7 @@ num_if(A, N) ->
         true -> 0
     end.
 chord2num(#chord{a = A, b = B, r = C, 
-                 dd = D, dl = E, l = F}) ->
+                 dd = D, du = E, l = F}) ->
     X1 = num_if(A, 1),
     X2 = num_if(B, 2),
     X3 = num_if(C, 4),
@@ -192,7 +199,8 @@ l2n(_) -> undefined.
 % 10: e, 17: a, 33: o, 12: u, 34: n, 20: m, 
 % 36: i, 18: h, 9: s, 48: d, 6: t, 40: r, 5: l,
 % 37: b, 44: g, 41: z, 13: j, 42: c, 21: k,
-% 49: v, 14: w, 50: y, 22: x, 38: q, 52: p
+% 49: v, 14: w, 50: y, 22: x, 38: q, 52: p, 11: f
+
 
 %given the chord, which letter does it encode?
 c2l(10) -> e;% 8 2
@@ -218,7 +226,8 @@ c2l(37) -> b;% 32 4 1
 c2l(44) -> g;% 32 8 4
 c2l(41) -> z;% 32 8 1
 c2l(13) -> j;% 8 4 1
-c2l(45) -> f;% 32 8 4 1
+%c2l(45) -> f;% 32 8 4 1
+c2l(11) -> f;% 32 8 4 1
 
 c2l(42) -> c;% 32 8 2
 c2l(21) -> k;% 16 4 1
@@ -243,16 +252,26 @@ c2l(_) -> undefined.
 % 3: 48, 4: 20, 5: 17,
 % 6: 33, 7: 34, 8: 5, 9: 6
 
-chord2digit(40) -> 0;
-chord2digit(12) -> 1;
-chord2digit(10) -> 2;
-chord2digit(48) -> 3;
-chord2digit(20) -> 4;
-chord2digit(17) -> 5;
-chord2digit(33) -> 7;
-chord2digit(34) -> 6;
-chord2digit(5) -> 9;
-chord2digit(6) -> 8;
+%chord2digit(40) -> 0;
+%chord2digit(12) -> 1;
+%chord2digit(10) -> 2;
+%chord2digit(48) -> 3;
+%chord2digit(20) -> 4;
+%chord2digit(17) -> 5;
+%chord2digit(33) -> 7;
+%chord2digit(34) -> 6;
+%chord2digit(5) -> 9;
+%chord2digit(6) -> 8;
+chord2digit(5) -> 0;
+chord2digit(17) -> 1;
+chord2digit(33) -> 2;
+chord2digit(6) -> 3;
+chord2digit(10) -> 4;
+chord2digit(34) -> 5;
+chord2digit(12) -> 6;
+chord2digit(20) -> 7;
+chord2digit(40) -> 8;
+chord2digit(48) -> 9;
 chord2digit(_) -> undefined.
 
 %from a digit, to the code that C accepts.
@@ -294,7 +313,8 @@ chord2key2(C, P) ->
 %command(39, 3) ->
 %command(28, 0) ->
 %command(24, 3) ->
-command(3, 1) ->
+%command(chord, page)
+command(8, 4) ->
     %in emacs. for opening a shell consistently.
     [
      %close all but current window.
@@ -315,31 +335,29 @@ command(3, 1) ->
      [l2n(l),0,0,0,0],
      [2,0,0,0,0]%enter
     ];
-command(25, 1) -> 
+command(9, 4) -> 
     %expand current window
     [
      [l2n(x),0,1,0,0],
      [digit2code(1),0,0,0,0]
     ];
-command(26, 0) -> 
+%command(16, 4) -> 
+command(7, 0) -> 
+    %other window
     [
      [l2n(x),0,1,0,0],
      [l2n(o),0,0,0,0]
     ];
-command(28, 0) -> 
-    %for opening a file in the other window
+command(4, 4) -> 
+    %for opening a file  
     %C-x o C-x C-f
     [
-     %[l2n(x),0,1,0,0],
-     %[digit2code(1),0,0,0,0],
-     %[l2n(x),0,1,0,0],
-     %[digit2code(3),0,0,0,0],
-     [l2n(x), 0, 1, 0, 0],
-     [l2n(o), 0, 0, 0, 0],
+     %[l2n(x), 0, 1, 0, 0],
+     %[l2n(o), 0, 0, 0, 0],
      [l2n(x), 0, 1, 0, 0],
      [l2n(f), 0, 1, 0, 0]
     ];
-command(11, 1) -> 
+command(32, 4) -> 
     %duplicate current window
     [
      [l2n(x),0,1,0,0],
@@ -349,29 +367,30 @@ command(11, 1) ->
     ];
 
 %alt-p (previous command in the terminal inside of emacs) 32 + 16 + 4 + 2
-command(25, 0) -> [[l2n(p),0,0,1,0]];
+command(35, 0) -> [[l2n(p),0,0,1,0]];
 
 %alt-n (next command in the terminal inside of emacs) 4 + 2 + 1
-command(11, 0) -> [[l2n(n),0,0,1,0]];
+command(19, 0) -> [[l2n(n),0,0,1,0]];
 
 %alt-shift-5 (search and replace) 32 + 2 + 1
-command(35, 0) ->  [[digit2code(5),1,0,1,0]];
+command(3, 4) ->  [[digit2code(5),1,0,1,0]];
 
 %alt-slash (guess the word) 32 + 4 + 2 + 1
-command(24, 0) ->  [[65,0,0,1,0]];
+command(8, 2) ->  [[65,0,0,1,0]];
 
 %alt-left carrot (beginning of document) 32+16+8
-command(56, 1) -> [[59,1,0,1,0]];
+command(35, 3) -> [[59,1,0,1,0]];
 
 %alt-right carrot (end of document) 1+2+4
-command(7, 1) -> [[60,1,0,1,0]];
+command(7, 3) -> [[60,1,0,1,0]];
 
-command(19, 1) -> [[l2n(x),0,1,0,0],
+%save
+command(16, 3) -> [[l2n(x),0,1,0,0],
                    [l2n(s),0,1,0,0]
                   ];
 
 %alt-x, 16 + 8 + 4
-command(24, 1) -> [[l2n(x),0,0,1,0]];
+command(6, 4) -> [[l2n(x),0,0,1,0]];
 
 %control alt left
 command(32, 3) -> [[6,0,1,1,0]];
@@ -382,23 +401,70 @@ command(8, 3) -> [[70,0,1,0,0]];
 %control pagedown
 command(1, 3) -> [[71,0,1,0,0]];
 
+%control + (to make text bigger)
+command(41, 4) ->[[67,1,1,0,0]];
+%control - (to make text smaller)
+command(13, 4) ->[[68,0,1,0,0]];
+
+
+
+%é
+command(10, 4) -> [[l2n(x),0,1,0,0],
+                   [digit2code(8),0,0,0,0],
+                   [58,0,0,0,0],%'
+                   [l2n(e),0,0,0,0]
+                  ];
+%ú
+command(12, 4) -> [[l2n(x),0,1,0,0],
+                   [digit2code(8),0,0,0,0],
+                   [58,0,0,0,0],%'
+                   [l2n(u),0,0,0,0]
+                  ];
+%án
+command(17, 4) -> [[l2n(x),0,1,0,0],
+                   [digit2code(8),0,0,0,0],
+                   [58,0,0,0,0],%'
+                   [l2n(a),0,0,0,0]
+                  ];
+%ó
+command(33, 4) -> [[l2n(x),0,1,0,0],
+                   [digit2code(8),0,0,0,0],
+                   [58,0,0,0,0],%'
+                   [l2n(o),0,0,0,0]
+                  ];
+%í
+command(36, 4) -> [[l2n(x),0,1,0,0],
+                   [digit2code(8),0,0,0,0],
+                   [58,0,0,0,0],%'
+                   [l2n(i),0,0,0,0]
+                  ];
+%ñ 
+command(34, 4) -> [[l2n(x),0,1,0,0],
+                   [digit2code(8),0,0,0,0],
+                   [64,1,0,0,0],%~
+                   [l2n(n),0,0,0,0]
+                  ];
+
 command(_, _) -> undefined.
 %+ alt (x > < % w /) 6
 
 
 
-
-chord2key(63, _) -> [0,0,0,0,0];%page0 pressing all buttons takes you back to page 0.
+%chord, page
 chord2key(1, 0) -> [0,0,0,0,1];%page1
 chord2key(2, 0) -> [0,0,0,0,3];%page 3
 chord2key(8, 0) -> [0,0,0,0,2];%page2
+chord2key(16, 0) -> [0,0,0,0,4];%page 4
 
-chord2key(16, 0) -> [1,0,0,0,0];%tab 
+%chord2key(16, 0) -> [1,0,0,0,0];%tab 
+%chord2key(7, 0) -> [1,0,0,0,0];%tab
+chord2key(16, 4) -> [1,0,0,0,0];%tab
 chord2key(32, 0) -> [3,0,0,0,0];%backspace
 chord2key(2, 3) -> [5,0,0,0,0];%esc (double tap)
 chord2key(3, 0) -> [2,0,0,0,0];%enter
 chord2key(4, 0) -> [69,0,0,0,0];%space
-chord2key(8, 2) -> [4,0,0,0,0];%delete (double tap)
+%chord2key(8, 2) -> [4,0,0,0,0];%delete (double tap)
+chord2key(48, 4) -> [4,0,0,0,0];%delete (double tap)
 
 chord2key(1, 1) -> [36,1,0,0,0];%right paren
 chord2key(8, 1) -> [45,1,0,0,0];%left paren
@@ -406,16 +472,21 @@ chord2key(2, 1) -> [62,1,0,0,0];%right brace
 chord2key(16, 1) -> [63,1,0,0,0];%left brace
 chord2key(4, 1) -> [62,0,0,0,0];%right bracket
 chord2key(32, 1) -> [63,0,0,0,0];%left bracket
-%chord2key(7, 1) -> [60,1,0,0,0];%right carrot
-chord2key(28, 1) -> [60,1,0,0,0];%right carrot
-%chord2key(56, 1) -> [59,1,0,0,0];%left carrot
-chord2key(26, 1) -> [59,1,0,0,0];%left carrot
+%chord2key(28, 1) -> [60,1,0,0,0];%right carrot
+chord2key(7, 1) -> [60,1,0,0,0];%right carrot
+%chord2key(26, 1) -> [59,1,0,0,0];%left carrot
+chord2key(35, 1) -> [59,1,0,0,0];%left carrot
 
-chord2key(54, 0) -> [8,0,0,0,0];%up
-chord2key(56, 0) -> [6,0,0,0,0];%left
-chord2key(7, 0) -> [7,0,0,0,0];%right
-chord2key(27, 0) -> [9,0,0,0,0];%down
+%chord2key(54, 0) -> [8,0,0,0,0];%up
+chord2key(2, 4) -> [8,0,0,0,0];%up
+%chord2key(56, 0) -> [6,0,0,0,0];%left
+chord2key(40, 4) -> [6,0,0,0,0];%left
+%chord2key(7, 0) -> [7,0,0,0,0];%right
+chord2key(5, 4) -> [7,0,0,0,0];%right
+%chord2key(27, 0) -> [9,0,0,0,0];%down
+chord2key(1, 4) -> [9,0,0,0,0];%down
 
+ 
 
 %memorization guide
 % one button
@@ -444,7 +515,8 @@ chord2key(18, 2) -> [68,0,0,0,0];%-
 chord2key(19, 2) -> [64,1,0,0,0];%~
 chord2key(21, 2) -> [67,1,0,0,0];%+
 chord2key(22, 2) -> [40,1,0,0,0];%$
-chord2key(24, 2) -> [66,0,0,0,0];%\
+%chord2key(24, 2) -> [66,0,0,0,0];%\
+chord2key(3, 3) -> [66,0,0,0,0];%\
 chord2key(32, 2) -> [61,1,0,0,0];%: 
 chord2key(36, 2) -> [58,1,0,0,0];%"
 chord2key(37, 2) -> [65,1,0,0,0];%?
@@ -455,13 +527,11 @@ chord2key(44, 2) -> [39,1,0,0,0];%#
 chord2key(50, 2) -> [41,1,0,0,0];%%
 chord2key(52, 2) -> [58,0,0,0,0];%'
 chord2key(54, 2) -> [42,1,0,0,0];%^
-chord2key(56, 2) -> [66,1,0,0,0];%|
-chord2key(_, 0) -> 
-    %undefined chord on page 0. do nothing.
-    [0,0,0,0,0];
-chord2key(K, _) -> 
-    %if chord is undefined on that page, use the version from page 0 instead.
-    chord2key(K, 0).
+%chord2key(56, 2) -> [66,1,0,0,0];%|
+chord2key(3, 1) -> [66,1,0,0,0];%|
+chord2key(_, _) -> 
+    %undefined chord. go to page 0.
+    [0,0,0,0,0].
 
 doit() ->
     start("./ebin/gamepad").
@@ -487,14 +557,16 @@ loop(Port, DB = #db{buttons = Buttons,
             %io:fwrite(integer_to_list(Button)),
             %io:fwrite("\n"),
             case {Button, Status, Type, R} of
-                {?dd, 1, 2, false} -> %start repeater
+                %{?dd, 1, 2, false} -> %start repeater
+                {?x, 1, 1, false} -> %start repeater
                     %press the button down and hold it.
                     %io:fwrite("press repeater\n"),
                     press_key(Recent, 
                               Recent#chord.page),
                     %set a flag to ignore everything else until the button gets lifted.
                     loop(Port, DB#db{repeating = true});
-                {?dd, 0, 2, true} -> %end repeater
+                %{?dd, 0, 2, true} -> %end repeater
+                {?x, 0, 1, true} -> %end repeater
                     %!io:fwrite("unpress repeater\n"),
                     unpress_key(Recent, 
                                 Recent#chord.page),
