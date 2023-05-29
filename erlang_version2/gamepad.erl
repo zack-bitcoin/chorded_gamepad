@@ -148,6 +148,11 @@ tap_keys(A = #chord{}, P) ->
     Keys2 = filter_bad_keys(Keys),
     L = lists:map(
           fun([Key, Shift, Ctrl, Alt, P2]) ->
+                  if
+                      (Shift == 1) ->
+                          io:fwrite("shift pressed \n");
+                      true -> ok
+                  end,
                   keyboard:key(
                     Key, Shift, Ctrl, Alt),
                   P2
@@ -451,7 +456,9 @@ command(_, _) -> undefined.
 
 
 %chord, page
-chord2key(1, 0) -> [0,0,0,0,1];%page1
+chord2key(1, 0) -> 
+    io:fwrite("chord2key page 1\n"),
+    [0,0,0,0,1];%page1
 chord2key(2, 0) -> [0,0,0,0,3];%page 3
 chord2key(8, 0) -> [0,0,0,0,2];%page2
 chord2key(16, 0) -> [0,0,0,0,4];%page 4

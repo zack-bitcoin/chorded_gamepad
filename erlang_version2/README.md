@@ -51,11 +51,11 @@ lower case letters are on page 0. upper case is on page 1. Control + letter is o
 in order of pairs of letters.
  10: e, 17: a, 33: o, 12: u, 34: n, 20: m, 
  36: i, 18: h, 9: s, 48: d, 6: t, 40: r, 5: l,
- 37: b, 44: g, 41: z, 13: j, 45: f, 42: c, 21: k,
- 49: v, 14: w, 50: x, 22: y, 38: q, 52: p
+ 37: b, 44: g, 41: z, 13: j, 11: f, 42: c, 21: k,
+ 49: v, 14: w, 22: x, 50: y, 38: q, 52: p
 
 in alphabetical order.
-% a 17, b 37, c 42, d 48, e 10, f 45, g 44, h 18, i 36, j 13, k 21, l 5, m 20, n 34, o 33, p 52, q 38, r 40, s 9, t 6, u 12, v 49, w 14, x 50, y 22, z 41
+% a 17, b 37, c 42, d 48, e 10, f 11, g 44, h 18, i 36, j 13, k 21, l 5, m 20, n 34, o 33, p 52, q 38, r 40, s 9, t 6, u 12, v 49, w 14, x 22, y 50, z 41
 
 numbers
 ==========

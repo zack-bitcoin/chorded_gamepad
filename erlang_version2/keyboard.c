@@ -97,13 +97,16 @@ void emit(int fd, int type, int code, int val)
    ie.type = type;
    ie.code = code;
    ie.value = val;
+   //printf("type: %i, code: %i, value: %i\n", type, code, val);
    write(fd, &ie, sizeof(ie));
 }
 void key_down(int fd, __u16 key){
+  //printf("down %i,", key);
   emit(fd, EV_KEY, key, 1);
   emit(fd, EV_SYN, SYN_REPORT, 0);
 }
 void key_up(int fd, __u16 key){
+  //printf("up %i,", key);
   emit(fd, EV_KEY, key, 0);
   emit(fd, EV_SYN, SYN_REPORT, 0);
 }
@@ -185,28 +188,39 @@ static ERL_NIF_TERM key
   enif_get_uint64(env, argv[1], &Shift);
   enif_get_uint64(env, argv[2], &Control);
   enif_get_uint64(env, argv[3], &Alt);
+  //printf("in key\n");
+  //printf("shift is: %li\n", Shift);
   if(Control){
     key_down(uinp_fd, KEY_LEFTCTRL);
   }
   if(Shift){
+    //printf("<S");
     key_down(uinp_fd, KEY_LEFTSHIFT);
+    //key_down(uinp_fd, 42);
   }
   if(Alt){
     key_down(uinp_fd, KEY_LEFTALT);
   }
   //key_down(uinp_fd, Key);
   //printf("%i\n", KEY_Z)
+  //printf("[");
   key_down(uinp_fd, keys[Key]);
   key_up(uinp_fd, keys[Key]);
+  usleep(10000);
+  //printf("]");
   if(Alt){
     key_up(uinp_fd, KEY_LEFTALT);
   }
   if(Shift){
+    //printf("S>");
     key_up(uinp_fd, KEY_LEFTSHIFT);
+    //key_up(uinp_fd, 42);
   }
   if(Control){
     key_up(uinp_fd, KEY_LEFTCTRL);
   }
+  //printf("\n");
+  //printf("finished in key\n");
   return argv[0];
 }
 
